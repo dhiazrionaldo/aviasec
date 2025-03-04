@@ -75,40 +75,18 @@ export default function terminalPairingMaster() {
             if (data.session?.user) {
                 const { data: gate } = await supabase
                     .from("master_pairing_gate")
-                    .select("*");
+                    .select(`
+                            *,
+                            master_station(id, station_name, station_code),
+                            master_terminal(id, terminal),
+                            master_gate(id, gate),
+                            master_parking_stand(id, parking_stand)
+                        `);
                 return gate;
             }
             return [];
         }
     });
-}
-
-export async function editTerminalPairing(datas) {
-    const supabase = createClient();
-    const { data } = await supabase.auth.getSession();
-    const user_id = data?.session?.user.id;
-    const userDet = await getUserDetail(user_id);
-    const today = new Date().toISOString();
-    
-    if (data.session?.user) {
-        // Update the profile with the provided data
-        const { data: pairing_gate, error } = await supabase
-            .from("master_pairing_gate")
-            .update({
-                gate_id: datas.gate_id, // Use the vendor_id from the profiles data
-                parking_id: datas.parking_id, // Use the vendor_id from the profiles data
-                terminal_id: datas.terminal_id, // Use the vendor_id from the profiles data
-                station_id: datas.station_id, // Use the vendor_id from the profiles data
-                remark: datas.remark, // Use the vendor_id from the profiles data
-                modified_at: today, // Use the today date for modified date
-                modified_by: userDet.display_name // Use the display name for modified by
-            })
-            .eq('id', datas.id)
-            .select();
-
-        return pairing_gate;
-    }
-    return initGateMaster;
 }
 
 export async function submitTerminalPairing(datas) {

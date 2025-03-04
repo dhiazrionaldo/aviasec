@@ -15,10 +15,11 @@ import { Input } from '@/components/ui/input';
 export const maxDuration = 60;
 
 export type terminalPairingSetting = {
-company_id: number | null;
+  company_id: number | null;
   created_at: string | null;
   created_by: string | null;
   id: string | null;
+  image_url: string | null;
   modified_at: string | null;
   modified_by: string | null;
   parking_id: number | null;
@@ -42,7 +43,6 @@ company_id: number | null;
     id: number | null;
     parking_stand: number | null;
   }
-  remark: string| null;
 };
 
 export const columns: ColumnDef<terminalPairingSetting>[] = [
