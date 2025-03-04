@@ -103,10 +103,10 @@ export default function LoginPage() {
           
           <div className='flex flex-col gap-2'>
               {loading ? (
-                  <Button disabled className='block w-full flex items-center gap-2 text-white' variant={'outline'}><Loader2 className='animate-spin'/> Google Account Login</Button>
+                  <Button disabled className='w-full flex items-center gap-2 text-white' variant={'outline'}><Loader2 className='animate-spin'/> Google Account Login</Button>
               ): (
                   <>
-                  <Button onClick={()=>handleLoginWithOAuth("google")} className='block w-full rounded flex items-center gap-2 bg-blue-900 text-white hover:text-black'><FcGoogle /> Google Account Login</Button>
+                  <Button onClick={()=>handleLoginWithOAuth("google")} className='w-full flex items-center gap-2 bg-indigo-700 text-white hover:bg-indigo-900'><FcGoogle /> Google Account Login</Button>
                   </>
               )}
               
@@ -161,7 +161,7 @@ export default function LoginPage() {
             <p>don't have an account?</p>
           </div>
           <Link href="/signup">
-            <Button className='flex w-full bg-blue-900 text-white hover:text-black'><UserPlus2Icon size={15}  /> Sign Up</Button>
+            <Button className='flex w-full bg-blue-800 text-white hover:bg-blue-900'><UserPlus2Icon size={15}  /> Sign Up</Button>
           </Link>
       </div>
 

@@ -264,6 +264,11 @@ export default function SignUpPage() {
                 </CarouselItem>
             </CarouselContent>
         </Carousel>
+
+        
+        <div className='glowBox -z-10'>
+
+        </div>
     </div>
     
     );
