@@ -13,14 +13,14 @@ export default function HomeButton() {
     const [isAdmin, setAdmin] = useState(false);
 
     useEffect(() => {
-        if (data) {
+        if (data?.id) {
             setAuth(true);
             setAdmin(data?.master_role?.role_name === "admin" || data?.master_role?.role_name === "superadmin");
         }
     }, [data]);
 
     if (!data) return <p>Loading user data...</p>; // ✅ Prevent rendering before data is available
-
+    
     return (
         <div>
             {loading ? (
@@ -35,7 +35,7 @@ export default function HomeButton() {
                 </Link>
             ) : isAuth && !isAdmin ? (
                 <p>Please ask your administrator to assign your account</p>
-            ) : null}
+            ) : <div></div>}
         </div>
     );
 }

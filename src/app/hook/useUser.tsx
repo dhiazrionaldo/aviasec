@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient  } from '@tanstack/react-query'
 import React from 'react'
 
 const initUser = {
-    company_id: "",
+    company_id: null,
     created_at: "",
     display_name: "",
     email: "",
