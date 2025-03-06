@@ -173,7 +173,6 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             }else{
                 return (
                     <Input
-                        maxLength={2}
                         value={airline_code_iata || ""}
                         onChange={handleAirlineNameIATAChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
@@ -202,7 +201,6 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             }else{
                 return (
                     <Input
-                        maxLength={3}
                         value={airline_code_icao || ""}
                         onChange={handleAirlineNameICAOChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
@@ -232,7 +230,6 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             }else{
                 return (
                     <Input
-                        maxLength={4}
                         value={flight_number || ""}
                         onChange={handleFlightNumberChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected

@@ -41,13 +41,13 @@ import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { CirclePlus, EllipsisIcon, Loader2, Save, Trash2Icon } from "lucide-react";
-import { submitScheduleArrival } from "@/app/hook/manual_schedule/arrival_manual_schedule";
+import { deleteDepartureManualFlightSchedule, submitDepartureManualFlightSchedule } from "@/app/hook/departure_flight_schedule/departure_flight_schedule";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from '@tanstack/react-query';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { AlertDialog, AlertDialogAction,AlertDialogContent, AlertDialogCancel, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { deleteArrivalManualSchedule } from "@/app/hook/manual_schedule/arrival_manual_schedule";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import useUser from "@/app/hook/useUser";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -104,10 +104,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       airline_iata: null,
       airline_icao: null,
       flight_number: null,
-      a_ori_iata1: null,
-      a_ori_iata2: null,
-      a_ori_iata3: null,
-      a_ori_iata4: null,
+      d_des_iata1: null,
+      d_des_iata2: null,
+      d_des_iata3: null,
+      d_des_iata4: null,
       monday: null,
       tuesday: null,
       wednesday: null,
@@ -141,18 +141,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             },
           ];
       // Send the data to your API or backend function
-      await submitScheduleArrival(dataToSubmit);
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_schedule"]});
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_flight_schedule"]}); 
+      await submitDepartureManualFlightSchedule(dataToSubmit);
+      queryClient.invalidateQueries({queryKey: ["departure_manual_schedule"]}); 
       
       toast.success("Success submitting data!");
       
     } catch (error) {
       console.log(error);
       toast.error(error.message || "System Error: Unable to submit data");
-      // setTimeout(() => {
-      //   window.location.reload();  
-      // }, 3000);
+      setTimeout(() => {
+        window.location.reload();  
+      }, 2000);
       
     } finally{
       setLoading(false)
@@ -160,7 +159,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       setIsDialogOpen2(false);
     }
   };
-  
+
   const handleDelete = async() => {
     setLoading(true)
     try {
@@ -182,9 +181,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             },
           ];
       // Send the data to your API or backend function
-      await deleteArrivalManualSchedule(dataToSubmit);
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_schedule"]}); 
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_flight_schedule"]}); 
+      await deleteDepartureManualFlightSchedule(dataToSubmit);
+      queryClient.invalidateQueries({queryKey: ["departure_manual_schedule"]}); 
       
       toast.success("Success delete data!");
       
@@ -198,66 +196,60 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     } finally{
       setLoading(false)
       setRowSelection({});  // 🔹 Reset selection after submission
-      setIsDialogOpen3(false);
+      setIsDialogOpen2(false);
     }
   };
-
+  
   return (
     <>
-      <div className="flex md:flex-row grid md:grid-cols-7 gap-3 items-center py-4">
-        <Input
-          placeholder="Search IATA Airline Code..."
-          value={(table.getColumn("airline_code_iata")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("airline_code_iata")?.setFilterValue(event.target.value)
-          }
-          className="max-w mr-2"
-        />
+      <div className="flex md:flex-row grid md:grid-cols-6 gap-3 items-center py-4">
         <Input
           placeholder="Search Flight Number..."
-          value={(table.getColumn("flight_number")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("flight_number_iata")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("flight_number")?.setFilterValue(event.target.value)
+            table.getColumn("flight_number_iata")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
         <Input
-          placeholder="Search Origin 1..."
-          value={(table.getColumn("a_ori_iata1")?.getFilterValue() as string) ?? ""}
+          placeholder="Search Destination..."
+          value={(table.getColumn("a_des_iata")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("a_ori_iata1")?.setFilterValue(event.target.value)
+            table.getColumn("a_des_iata")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
         <Input
-          placeholder="Search Origin 2..."
-          value={(table.getColumn("a_ori_iata2")?.getFilterValue() as string) ?? ""}
+          placeholder="Search Terminal..."
+          value={(table.getColumn("d_origin_terminal")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("a_ori_iata2")?.setFilterValue(event.target.value)
+            table.getColumn("d_origin_terminal")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
         <Input
-          placeholder="Search Origin 3..."
-          value={(table.getColumn("a_ori_iata3")?.getFilterValue() as string) ?? ""}
+          placeholder="Search Boarding Gate..."
+          value={(table.getColumn("d_origin_gate")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("a_ori_iata3")?.setFilterValue(event.target.value)
+            table.getColumn("d_origin_gate")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
         <Input
-          placeholder="Search Origin 4..."
-          value={(table.getColumn("a_ori_iata4")?.getFilterValue() as string) ?? ""}
+          placeholder="Search Parking Stand..."
+          value={(table.getColumn("d_parking_stand")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("a_ori_iata4")?.setFilterValue(event.target.value)
+            table.getColumn("d_parking_stand")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
-        <Popover>
+         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="md:max-w-[40px] sm:w-full"><EllipsisIcon /></Button>
           </PopoverTrigger>
           <PopoverContent className="grid w-fit gap-3">
+            <h3 className="space-y-5"><strong>Action</strong></h3>
+            <Separator />
             <Button className="bg-blue-700 hover:bg-blue-900" disabled={loading} onClick={() => setIsDialogOpen(true)}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CirclePlus size={15} />}
               Add Rows
@@ -278,7 +270,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               <></>
             )}
           </PopoverContent>
-        </Popover>  
+        </Popover>
       </div>
 
       <div className="rounded-md border">

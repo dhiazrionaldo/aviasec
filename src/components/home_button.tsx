@@ -13,12 +13,9 @@ export default function HomeButton() {
     const [isAdmin, setAdmin] = useState(false);
 
     useEffect(() => {
-        console.log("User data received:", data); // ✅ Debugging Log
-
         if (data) {
             setAuth(true);
             setAdmin(data?.master_role?.role_name === "admin" || data?.master_role?.role_name === "superadmin");
-            console.log("isAuth set to:", true);
         }
     }, [data]);
 

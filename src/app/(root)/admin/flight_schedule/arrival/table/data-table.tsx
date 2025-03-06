@@ -45,7 +45,8 @@ import { submitScheduleArrival } from "@/app/hook/manual_schedule/arrival_manual
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from '@tanstack/react-query';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { AlertDialog, AlertDialogAction,AlertDialogContent, AlertDialogCancel, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialogContent } from "@radix-ui/react-alert-dialog";
 import { deleteArrivalManualSchedule } from "@/app/hook/manual_schedule/arrival_manual_schedule";
 import useUser from "@/app/hook/useUser";
 
@@ -142,8 +143,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           ];
       // Send the data to your API or backend function
       await submitScheduleArrival(dataToSubmit);
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_schedule"]});
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_flight_schedule"]}); 
+      queryClient.invalidateQueries({queryKey: ["arrival_manual_schedule"]}); 
       
       toast.success("Success submitting data!");
       
@@ -183,8 +183,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           ];
       // Send the data to your API or backend function
       await deleteArrivalManualSchedule(dataToSubmit);
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_schedule"]}); 
-      queryClient.invalidateQueries({queryKey: ["arrival_manual_flight_schedule"]}); 
+      queryClient.invalidateQueries({queryKey: ["departure_manual_schedule"]}); 
       
       toast.success("Success delete data!");
       
@@ -198,21 +197,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     } finally{
       setLoading(false)
       setRowSelection({});  // 🔹 Reset selection after submission
-      setIsDialogOpen3(false);
+      setIsDialogOpen2(false);
     }
   };
 
   return (
     <>
-      <div className="flex md:flex-row grid md:grid-cols-7 gap-3 items-center py-4">
-        <Input
-          placeholder="Search IATA Airline Code..."
-          value={(table.getColumn("airline_code_iata")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("airline_code_iata")?.setFilterValue(event.target.value)
-          }
-          className="max-w mr-2"
-        />
+      <div className="flex md:flex-row grid md:grid-cols-6 gap-3 items-center py-4">
         <Input
           placeholder="Search Flight Number..."
           value={(table.getColumn("flight_number")?.getFilterValue() as string) ?? ""}

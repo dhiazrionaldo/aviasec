@@ -73,7 +73,7 @@ const daysOfWeek = [
     { id: "sunday", label: "Sunday" },
 ];
 
-export type DepartureManualSchedules = {
+export type DepartureManualFlightSchedules = {
     flight_date: string | null;
     flight_time: string | null;
     d_origin_name: string | null;
@@ -173,6 +173,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             }else{
                 return (
                     <Input
+                        maxLength={2}
                         value={airline_code_iata || ""}
                         onChange={handleAirlineNameIATAChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
@@ -201,6 +202,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             }else{
                 return (
                     <Input
+                        maxLength={3}
                         value={airline_code_icao || ""}
                         onChange={handleAirlineNameICAOChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
@@ -230,6 +232,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             }else{
                 return (
                     <Input
+                        maxLength={4}
                         value={flight_number || ""}
                         onChange={handleFlightNumberChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
@@ -273,7 +276,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
                                 )}
                             >
                                 <CalendarIcon />
-                                {start_effective_date ? format(start_effective_date, "PPP") : <span>Pick a date</span>}
+                                {start_effective_date ? format(start_effective_date, "yyyy-MM-dd") : <span>Pick a date</span>}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -322,7 +325,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
                                 )}
                             >
                                 <CalendarIcon />
-                                {end_effective_date ? format(end_effective_date, "PPP") : <span>Pick a date</span>}
+                                {end_effective_date ? format(end_effective_date, "yyyy-MM-dd") : <span>Pick a date</span>}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -346,6 +349,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             
             // Track the quantity change in the state
             const handleFlightTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                console.log(flight_time);
                 setFlightTime(String(e.target.value));
                 row.original.flight_time = String(e.target.value); // Update row data
             };

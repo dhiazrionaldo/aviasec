@@ -6,6 +6,7 @@ import {
   Boxes,
   Building2Icon,
   CalendarArrowUpIcon,
+  CalendarMinus,
   Dock,
   DollarSignIcon,
   DoorOpenIcon,
@@ -46,8 +47,9 @@ const adminSidebarItems: SidebarItems = {
 
   links: [
     { label: 'Dashboard', href: '/admin/home', icon: LineChartIcon },
-    { label: 'Automatic Schedule', href: '/admin/schedule_auto', icon: PlaneIcon },
+    { label: 'Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
     { label: 'Manual Schedule Upload', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
+    { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
     // { label: 'Order Report', href: '/admin/order_report', icon: ListCheckIcon },
     // { label: 'Order', href: '/admin/proposal_order', icon: ListOrderedIcon },
     // {
@@ -145,8 +147,9 @@ const adminSidebarItems: SidebarItems = {
 const superAdminSidebarItems: SidebarItems = {
   links: [
     { label: 'Dashboard', href: '/admin/home', icon: LineChartIcon },
-    { label: 'Automatic Schedule', href: '/admin/schedule_auto', icon: PlaneIcon },
+    { label: 'Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
     { label: 'Manual Schedule Upload', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
+    { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
     // { label: 'Lounge Stocks', href: '/admin/lounge', icon: Martini },
     // { label: 'Order', href: '/admin/proposal_order', icon: ListOrderedIcon },
     // { label: 'Vendor Price', href: '/admin/vendor_price', icon: DollarSignIcon },

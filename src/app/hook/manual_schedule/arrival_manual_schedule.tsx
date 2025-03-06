@@ -3,16 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import { getUserDetail } from '../useUser';
 import { eachDayOfInterval, format } from "date-fns";
 
-export default function getDepartureManualSchedule() {
+export default function getArrivalManualSchedule() {
     return useQuery({
-        queryKey: ["departure_manual_schedule"],
+        queryKey: ["arrival_manual_schedule"],
         queryFn: async () => {
             const supabase = createClient();
             const { data } = await supabase.auth.getSession();
 
             if (data.session?.user) {
                 const { data: gate } = await supabase
-                    .from("departure_manual_schedule")
+                    .from("arrival_manual_schedule")
                     .select(`*`);
                 return gate;
             }
@@ -21,7 +21,7 @@ export default function getDepartureManualSchedule() {
     });
 }
 
-export async function submitScheduleDeparture(datas) {
+export async function submitScheduleArrival(datas) {
     const supabase = createClient();
     const { data } = await supabase.auth.getSession();
     const user_id = data?.session?.user.id;
@@ -38,16 +38,16 @@ export async function submitScheduleDeparture(datas) {
             if(!entry.schedule_type) throw new Error("The Schedule Type can not be empty");
             if(!entry.airline_code_iata) throw new Error("The Airline Code can not be empty");
             if(!entry.flight_number) throw new Error("The Flight Number can not be empty");
-            if(!entry.d_des_iata1) throw new Error("The Destination can not be empty");
-            if(!entry.d_ori_iata) throw new Error("The Origin Station can not be empty");
-            // if(!entry.start_effective_date) throw new Error("The Start Date can not be empty"); //still have bug on receive the date
-            // if(!entry.end_effective_date) throw new Error("The End Date can not be empty"); //still have bug on receive the date
+            if(!entry.a_ori_iata1) throw new Error("The Destination can not be empty");
+            if(!entry.a_des_iata) throw new Error("The Origin Station can not be empty");
+            if(!entry.start_effective_date) throw new Error("The Start Date can not be empty"); //still have bug on receive the date
+            if(!entry.end_effective_date) throw new Error("The End Date can not be empty"); //still have bug on receive the date
             if(!entry.aircraft_types) throw new Error("The Aircraft Type can not be empty");
             
             if (entry.id) {
                 // **UPDATE** existing record
                 const { data: existingData, error: fetchError } = await supabase
-                    .from("departure_manual_schedule")
+                    .from("arrival_manual_schedule")
                     .select("id")
                     .eq("id", entry.id)
                     .single();
@@ -60,7 +60,7 @@ export async function submitScheduleDeparture(datas) {
                 if (existingData) {
                     // Perform update
                     const { error: updateError, data: updated } = await supabase
-                        .from("departure_manual_schedule")
+                        .from("arrival_manual_schedule")
                         .update({
                             aircraft_model: entry.aircraft_model,
                             schedule_type: entry.schedule_type,
@@ -68,11 +68,11 @@ export async function submitScheduleDeparture(datas) {
                             airline_code_iata: entry.airline_code_iata,
                             airline_code_icao: entry.airline_code_icao,
                             airline_name: entry.airline_name,
-                            d_des_iata1: entry.d_des_iata1,
-                            d_des_iata2: entry.d_des_iata2,
-                            d_des_iata3: entry.d_des_iata3,
-                            d_des_iata4: entry.d_des_iata4,
-                            d_ori_iata: entry.d_ori_iata,
+                            a_ori_iata1: entry.a_ori_iata1,
+                            a_ori_iata2: entry.a_ori_iata2,
+                            a_ori_iata3: entry.a_ori_iata3,
+                            a_ori_iata4: entry.a_ori_iata4,
+                            a_des_iata: entry.a_des_iata,
                             flight_number: entry.flight_number,
                             monday: entry.monday,
                             tuesday: entry.tuesday,
@@ -95,7 +95,7 @@ export async function submitScheduleDeparture(datas) {
                         console.error("Error updating record:", updateError);
                         throw new Error(updateError.message);
                     }
-                    
+
                     //UPDATE SCHEDULE TABLE
                     if(updated){
                         const selectedDays ={
@@ -136,7 +136,7 @@ export async function submitScheduleDeparture(datas) {
                         const flightSchedule = filteredDates.map(date => ({
                             flight_date: format(date, "yyyy-MM-dd"),
                             flight_status: "scheduled",
-                            d_origin_iata: entry.d_ori_iata,
+                            d_origin_iata: entry.a_ori_iata1,
                             a_des_iata: entry.d_des_iata1,
                             d_origin_icao: entry.d_origin_icao,
                             d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
@@ -144,7 +144,6 @@ export async function submitScheduleDeparture(datas) {
                             airline_iata: entry.airline_code_iata,
                             airline_icao: entry.airline_code_icao,
                             flight_number: entry.flight_number,
-                            flight_number_iata: entry.airline_code_iata+entry.flight_number,
                             aircraft_type_iata: entry.aircraft_types,
                             schedule_type: entry.schedule_type,
                             aircraft_model: entry.aircraft_model,
@@ -153,7 +152,7 @@ export async function submitScheduleDeparture(datas) {
                         }));
                         
                         const { error: updateScheduleError } = await supabase
-                        .from("departure_manual_flight_schedule")
+                        .from("arrival_manual_flight_schedule")
                         .update(flightSchedule)
 
                         if (updateScheduleError) {
@@ -165,8 +164,8 @@ export async function submitScheduleDeparture(datas) {
                 }
             } else {
                 // **INSERT** new record
-                const { error: insertError, data:inserted } = await supabase
-                    .from("departure_manual_schedule")
+                const { error: insertError, data: inserted } = await supabase
+                    .from("arrival_manual_schedule")
                     .insert({
                         aircraft_model: entry.aircraft_model,
                         schedule_type: entry.schedule_type,
@@ -174,11 +173,11 @@ export async function submitScheduleDeparture(datas) {
                         airline_code_iata: entry.airline_code_iata,
                         airline_code_icao: entry.airline_code_icao,
                         airline_name: entry.airline_name,
-                        d_des_iata1: entry.d_des_iata1,
-                        d_des_iata2: entry.d_des_iata2,
-                        d_des_iata3: entry.d_des_iata3,
-                        d_des_iata4: entry.d_des_iata4,
-                        d_ori_iata: entry.d_ori_iata,
+                        a_ori_iata1: entry.a_ori_iata1,
+                        a_ori_iata2: entry.a_ori_iata2,
+                        a_ori_iata3: entry.a_ori_iata3,
+                        a_ori_iata4: entry.a_ori_iata4,
+                        a_des_iata: entry.a_des_iata,
                         flight_number: entry.flight_number,
                         monday: entry.monday,
                         tuesday: entry.tuesday,
@@ -201,7 +200,6 @@ export async function submitScheduleDeparture(datas) {
                     throw new Error(insertError.message);
                 }
 
-                console.log(inserted);
                 //INSERT TO SCHEDULE TABLE
                 if(inserted){
                     const selectedDays ={
@@ -240,26 +238,26 @@ export async function submitScheduleDeparture(datas) {
                 
                     // Generate flight schedule with STD
                     const flightSchedule = filteredDates.map(date => ({
-                        flight_date: format(date, "yyyy-MM-dd"),
-                        flight_status: "scheduled",
-                        d_origin_iata: entry.d_ori_iata,
-                        a_des_iata: entry.d_des_iata1,
-                        d_origin_icao: entry.d_origin_icao,
-                        d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
-                        airline_name: entry.airline_name,
-                        airline_iata: entry.airline_code_iata,
-                        airline_icao: entry.airline_code_icao,
-                        flight_number: entry.flight_number,
-                        flight_number_iata: entry.airline_code_iata+entry.flight_number,
-                        aircraft_type_iata: entry.aircraft_types,
-                        schedule_type: entry.schedule_type,
-                        aircraft_model: entry.aircraft_model,
-                        created_by: userDet.display_name,
+                    flight_date: format(date, "yyyy-MM-dd"),
+                    flight_status: "scheduled",
+                    d_origin_iata: entry.a_ori_iata1,
+                    a_des_iata: entry.d_des_iata1,
+                    d_origin_icao: entry.d_origin_icao,
+                    d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                    airline_name: entry.airline_name,
+                    airline_iata: entry.airline_code_iata,
+                    airline_icao: entry.airline_code_icao,
+                    flight_number: entry.flight_number,
+                    aircraft_type_iata: entry.aircraft_types,
+                    schedule_type: entry.schedule_type,
+                    aircraft_model: entry.aircraft_model,
+                    created_by: userDet.display_name,
+                    created_at: today,
                     }));
                     // console.log(flightSchedule);
 
                     const { error: insertScheduleError } = await supabase
-                    .from("departure_manual_flight_schedule")
+                    .from("arrival_manual_flight_schedule")
                     .insert(flightSchedule)
 
                     
@@ -269,8 +267,6 @@ export async function submitScheduleDeparture(datas) {
                     }
                     return flightSchedule;
                 }
-                
-                
             }
         }
     } catch (error) {
@@ -278,7 +274,7 @@ export async function submitScheduleDeparture(datas) {
     }
 }
 
-export async function deleteDepartureManualSchedule(datas) {
+export async function deleteArrivalManualSchedule(datas) {
     const supabase = createClient();
     const { data } = await supabase.auth.getSession();
     
@@ -289,7 +285,7 @@ export async function deleteDepartureManualSchedule(datas) {
             if (entry.id) {
                 // **UPDATE** existing record
                 const { error } = await supabase
-                .from("departure_manual_schedule")
+                .from("arrival_manual_schedule")
                 .delete()
                 .eq('id', entry.id);
 

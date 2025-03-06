@@ -28,9 +28,9 @@ export function SidebarDesktop({ sidebarItems, loading }: SidebarDesktopProps) {
     <aside className='w-[220px] max-w-xs h-screen fixed left-0 top-0 z-40 border-r'>
       <div className='h-full px-3 py-4'>
         <Link href="/">
-          <h3 className='mx-3 text-lg font-semibold text-foreground'>FIFO</h3>
+          <h3 className='mx-3 text-lg font-semibold text-foreground'>AVIASEC</h3>
         </Link>
-        <p className='mx-3 text-xs font-semibold text-foreground'>First In First Out</p>
+        <p className='mx-3 text-xs font-semibold text-foreground'>Your Flight Management System</p>
         <div className='mt-5'>
           <div className='flex flex-col gap-1 w-full'>
             {sidebarItems.links.map((link, index) => (

@@ -1,11 +1,11 @@
 'use client'
 
-import { DataTable } from '@/app/(root)/admin/setting/master_terminal_pairing/table/data-table'; // Adjust the import based on your actual DataTable component path
-import terminalPairingMaster from '@/app/hook/terminal_setting/terminal_merge';
+import { DataTable } from '@/app/(root)/admin/schedule_manual/arrival/table/data-table'; // Adjust the import based on your actual DataTable component path
+import getArrivalManualSchedule from '@/app/hook/manual_schedule/arrival_manual_schedule';
 import { columns } from './table/columns'; // Assuming you have a columns definition for the table
 
 export default function ArrivalManualSchedule() {
-  const { isFetching, data } = terminalPairingMaster();
+  const { isFetching, data } = getArrivalManualSchedule();
   
   const userData = data || []; // Adjust according to the actual structure of your profile data
   

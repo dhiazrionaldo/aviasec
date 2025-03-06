@@ -5,8 +5,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import DepartureManualSchedule from "./departure/page"
-import ArrivalManualSchedule from "./arrival/page"
+import DepartureFlightSchedule from "./departure/page"
+import ArrivalFlightSchedule from "./arrival/page"
 import { Suspense } from "react"
 
 export default function ManualSchedule() {
@@ -19,12 +19,12 @@ export default function ManualSchedule() {
       </TabsList>
       <TabsContent value="departure">
         <Suspense fallback={<p>Loading Proposals...</p>}>
-          <DepartureManualSchedule />
+          <DepartureFlightSchedule />
         </Suspense>
       </TabsContent>
       <TabsContent value="arrival">
         <Suspense fallback={<p>Loading Order...</p>}>
-          <ArrivalManualSchedule />
+          <ArrivalFlightSchedule />
         </Suspense>
       </TabsContent>
     </Tabs>
