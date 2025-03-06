@@ -173,7 +173,7 @@ export async function deleteDepartureManualFlightSchedule(datas) {
                         throw new Error(error.message);
                     }
             }
-            
+             
             
         }
     }
