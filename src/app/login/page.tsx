@@ -25,17 +25,13 @@ import  createClient  from '@/utils/supabase/client';
 //zod config
 const formSchema = z.object({
     email: z.string().min(1, { message: "This field has to be filled." })
-      .email("This is not a valid email."
-    ),
+      .email("This is not a valid email.")
+      .refine((email) => !email.endsWith("@gmail.com") || !email.endsWith("outlook.com") || !email.endsWith("yahoo.com"), {
+        message: "Only company email address are allowed.",
+      }),
     password: z.string().min(8, {
         message: "Password must be at least 8 characters. and use Upercase and Lowercase also symbols and number",
     }),
-    // display_name: z.string().min(1, {
-    //     message: "This field has to be filled.",
-    // }),
-    // employee_id: z.string().min(1, {
-    //     message: "This field has to be filled.",
-    // }),
   })
 //end zod config
 
@@ -50,8 +46,6 @@ export default function LoginPage() {
       defaultValues: {
         email: "",
         password: "",
-        // display_name: "",
-        // employee_id: ""
       }
     });
     // 2. Define a submit handler.

@@ -304,11 +304,11 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         id: "aircraft_type_iata",
         header: "Aircraft Type",
         cell: ({ row }) => {
-            const [aircraft_type_iata, setAircraftType] = React.useState(row.original.aircraft_type_iata);
+            const [aircraft_type_iata, setAircraftRegistration] = React.useState(row.original.aircraft_type_iata);
             
             // Track the quantity change in the state
-            const handleAircraftTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setAircraftType(String(e.target.value));
+            const handleAircraftRegistrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                setAircraftRegistration(String(e.target.value));
                 row.original.aircraft_type_iata = String(e.target.value.toUpperCase()); // Update row data
             };
             if(!row.getIsSelected?.()){
@@ -319,6 +319,34 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
                 return (
                     <Input
                         value={aircraft_type_iata || ""}
+                        onChange={handleAircraftRegistrationChange}
+                        disabled={!row.getIsSelected()} // Allow editing only when selected
+                        className="w-fit border-primary uppercase"
+                    />
+                );
+            }
+            
+        },
+    },
+    {
+        id: "aircraft_registration",
+        header: "Aircraft Registration",
+        cell: ({ row }) => {
+            const [aircraft_registration, setAircraftRegistration] = React.useState(row.original.aircraft_registration);
+            
+            // Track the quantity change in the state
+            const handleAircraftTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                setAircraftRegistration(String(e.target.value));
+                row.original.aircraft_registration = String(e.target.value.toUpperCase()); // Update row data
+            };
+            if(!row.getIsSelected?.()){
+                return (
+                    <span className='uppercase'>{row.original.aircraft_registration}</span>
+                );
+            }else{
+                return (
+                    <Input
+                        value={aircraft_registration || ""}
                         onChange={handleAircraftTypeChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
                         className="w-fit border-primary uppercase"
@@ -585,7 +613,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
                 return (
                     <span>
                         {/* {d_flight_std ? format(d_flight_std, "PPpp") : "No Date"} */}
-                        {d_flight_std ? format(d_flight_std, "PPpp") : "No Date"}
+                        {d_flight_std ? format(d_flight_std, "hh:mm:ss") : "No Date"}
                     </span>
                 );
             } else {

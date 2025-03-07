@@ -209,6 +209,7 @@ export const columns: ColumnDef<userSetting>[] = [
                 try {
                     const updatedUser = await editProfiles(rowData); // Call editProfiles with the row data
                     queryClient.invalidateQueries({queryKey: ["profile"]}); // Invalidate the profile query to refresh data
+                    queryClient.invalidateQueries({queryKey: ["user"]}); // Invalidate the profile query to refresh data
                     console.log("Profile updated:", updatedUser);
                     toast.success('sukses');
                 } catch (error) {

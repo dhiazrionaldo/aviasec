@@ -49,7 +49,7 @@ const adminSidebarItems: SidebarItems = {
     { label: 'Dashboard', href: '/admin/home', icon: LineChartIcon },
     { label: 'Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
     { label: 'Manual Schedule Upload', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
-    { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
+    // { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
     // { label: 'Order Report', href: '/admin/order_report', icon: ListCheckIcon },
     // { label: 'Order', href: '/admin/proposal_order', icon: ListOrderedIcon },
     // {
@@ -82,65 +82,65 @@ const adminSidebarItems: SidebarItems = {
       </PopoverContent>
     </Popover>
   ),
-  extras: (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant='ghost' className='w-full justify-start'>
-          <div className='flex justify-between items-center w-full'>
-            <div className='flex gap-2'>
-              <span><Settings /></span>
-              <span>Master Settings</span>
-            </div>
-            <MoreHorizontal size={20} />
-          </div>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className='mb-2 w-56 p-3 rounded-[1rem]'>
-        <div className='space-y-1'>
-        <Link href='/admin/setting/users'>
-          <SidebarButton size='sm' icon={User2} className='w-full'>
-              User Master
-          </SidebarButton>
-        </Link>
-        <Link href='/admin/setting/master_company'>
-          <SidebarButton size='sm' icon={Building2Icon} className='w-full'>
-            Company Settings
-          </SidebarButton>
-        </Link>
-        <Link href='/admin/setting/master_station'>
-          <SidebarButton size='sm' icon={TowerControlIcon} className='w-full'>
-              Station Master
-          </SidebarButton>
-        </Link>
-        <Link href='/admin/setting/master_terminal'>
-          <SidebarButton size='sm' icon={PlaneIcon} className='w-full'>
-              Terminal Master
-          </SidebarButton>
-        </Link>
-        <Link href='/admin/setting/master_role'>
-          <SidebarButton size='sm' icon={LaptopMinimalCheckIcon} className='w-full'>
-              Role Master
-          </SidebarButton>
-        </Link>
-        <Link href='/admin/setting/master_gate'>
-          <SidebarButton size='sm' icon={DoorOpenIcon} className='w-full'>
-              Gate Master
-          </SidebarButton>
-        </Link>
-        <Link href='/admin/setting/master_parking_stand'>
-          <SidebarButton size='sm' icon={SquareParking} className='w-full'>
-              Parking Stand Master
-          </SidebarButton>
-        </Link>
-          {/* <Link href='/admin/setting/company'>
-            <SidebarButton size='sm' icon={Building2Icon} className='w-full'>
-              Company Settings
-            </SidebarButton>
-          </Link> */}
-        </div>
-      </PopoverContent>
-    </Popover>
-  )
+  // extras: (
+  //   <Popover>
+  //     <PopoverTrigger asChild>
+  //       <Button variant='ghost' className='w-full justify-start'>
+  //         <div className='flex justify-between items-center w-full'>
+  //           <div className='flex gap-2'>
+  //             <span><Settings /></span>
+  //             <span>Master Settings</span>
+  //           </div>
+  //           <MoreHorizontal size={20} />
+  //         </div>
+  //       </Button>
+  //     </PopoverTrigger>
+  //     <PopoverContent className='mb-2 w-56 p-3 rounded-[1rem]'>
+  //       <div className='space-y-1'>
+  //       <Link href='/admin/setting/users'>
+  //         <SidebarButton size='sm' icon={User2} className='w-full'>
+  //             User Master
+  //         </SidebarButton>
+  //       </Link>
+  //       <Link href='/admin/setting/master_company'>
+  //         <SidebarButton size='sm' icon={Building2Icon} className='w-full'>
+  //           Company Settings
+  //         </SidebarButton>
+  //       </Link>
+  //       <Link href='/admin/setting/master_station'>
+  //         <SidebarButton size='sm' icon={TowerControlIcon} className='w-full'>
+  //             Station Master
+  //         </SidebarButton>
+  //       </Link>
+  //       <Link href='/admin/setting/master_terminal'>
+  //         <SidebarButton size='sm' icon={PlaneIcon} className='w-full'>
+  //             Terminal Master
+  //         </SidebarButton>
+  //       </Link>
+  //       <Link href='/admin/setting/master_role'>
+  //         <SidebarButton size='sm' icon={LaptopMinimalCheckIcon} className='w-full'>
+  //             Role Master
+  //         </SidebarButton>
+  //       </Link>
+  //       <Link href='/admin/setting/master_gate'>
+  //         <SidebarButton size='sm' icon={DoorOpenIcon} className='w-full'>
+  //             Gate Master
+  //         </SidebarButton>
+  //       </Link>
+  //       <Link href='/admin/setting/master_parking_stand'>
+  //         <SidebarButton size='sm' icon={SquareParking} className='w-full'>
+  //             Parking Stand Master
+  //         </SidebarButton>
+  //       </Link>
+  //         {/* <Link href='/admin/setting/company'>
+  //           <SidebarButton size='sm' icon={Building2Icon} className='w-full'>
+  //             Company Settings
+  //           </SidebarButton>
+  //         </Link> */}
+  //       </div>
+  //     </PopoverContent>
+  //   </Popover>
+  // )
 };
 
 // Admin sidebar configuration
@@ -149,7 +149,7 @@ const superAdminSidebarItems: SidebarItems = {
     { label: 'Dashboard', href: '/admin/home', icon: LineChartIcon },
     { label: 'Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
     { label: 'Manual Schedule Upload', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
-    { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
+    // { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
     // { label: 'Lounge Stocks', href: '/admin/lounge', icon: Martini },
     // { label: 'Order', href: '/admin/proposal_order', icon: ListOrderedIcon },
     // { label: 'Vendor Price', href: '/admin/vendor_price', icon: DollarSignIcon },

@@ -14,6 +14,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Badge } from '@/components/ui/badge';
+import { getGate, getParkingStand, getTerminal } from '@/app/hook/terminal_setting/terminal_merge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export const maxDuration = 60;
 
@@ -73,38 +76,63 @@ const daysOfWeek = [
     { id: "sunday", label: "Sunday" },
 ];
 
-export type DepartureManualSchedules = {
-    flight_date: string | null;
-    flight_time: string | null;
+export type DepartureManualFlightSchedules = {
+    id:number | null;
+    created_at: string | null;
+    modified_at: string | null;
+    created_by: string | null;
+    modified_by: string | null;
+    flight_date: Date | null;
+    flight_status: string | null;
     d_origin_name: string | null;
-    d_ori_iata: string | null;
+    d_origin_iata: string | null;
+    d_origin_icao: string | null;
+    d_origin_terminal: string | null;
+    d_origin_gate: string | null;
+    d_origin_delay: string | null;
+    d_flight_std: Date | null;
+    d_flight_etd: Date | null;
+    d_flight_atd: Date | null;
+    d_flight_e_runway: Date | null;
+    d_flight_a_runway: Date | null;
     a_des_name: string | null;
     a_des_iata: string | null;
-    d_flight_std: string | null;
+    a_des_icao: string | null;
+    a_des_terminal: string | null;
+    a_des_gate: string | null;
+    a_des_baggage: string | null;
+    a_des_sta: Date | null;
+    a_des_eta: Date | null;
+    a_des_ata: Date | null;
+    a_des_e_runway: Date | null;
+    a_des_a_runway: Date | null;
     airline_name: string | null;
-    airline_code_iata: string | null;
-    airline_code_icao: string | null;
+    airline_iata: string | null;
+    airline_icao: string | null;
     flight_number: string | null;
-    a_ori_iata1: string | null;
-    a_ori_iata2: string | null;
-    a_ori_iata3: string | null;
-    a_ori_iata_4: string | null;
-    monday: boolean | null;
-    tuesday: boolean | null;
-    wednesday: boolean | null;
-    thursday: boolean | null;
-    friday: boolean | null;
-    saturday: boolean | null;
-    sunday: boolean | null;
-    start_effective_date: Date | null;
-    end_effective_date: Date | null;
-    aircraft_types: string | null;
-    remark: string | null;
-    aircraft_model: string | null;
+    flight_number_iata: string | null;
+    flight_number_icao: string | null;
+    codeshared: string | null;
+    aircraft_registration: string | null;
+    aircraft_type_iata: string | null;
+    aircraft_type_icao: string | null;
+    aircraft_type_icao24: string | null;
+    live_position_update: string | null;
+    live_latitude: string | null;
+    live_longitude: string | null;
+    live_altitude: string | null;
+    live_direction: string | null;
+    live_speed_horizontal: string | null;
+    live_speed_vertical: string | null;
+    live_isground: string | null;
+    a_parking_stand: string | null;
+    d_parking_stand: string | null;
     schedule_type: string | null;
+    aircraft_model: string | null;
+
 }
 
-export const columns: ColumnDef<DepartureManualSchedules>[] = [
+export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
     // Row Selection Checkbox (This enables row editing)
     {
         id: "select",
@@ -126,112 +154,172 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
         enableSorting: false,
         enableHiding: false,
-    },     
+    }, 
+    {
+        id: "flight_status",
+        header: "Flight Status",
+        cell:({row}) => {
+            const status = new String(row.original.flight_status)
+            if(status == 'scheduled'){
+                return <div><Badge className='text-white bg-blue-700 hover:bg-blue-900 uppercase'>scheduled</Badge></div>
+            }else if(status == 'cancelled'){
+                return <div><Badge className='text-white bg-red-700 hover:bg-red-900 uppercase'>cancelled</Badge></div>
+            }else if(status == 'active'){
+                return <div><Badge className='text-white bg-indigo-700 hover:bg-indigo-900 uppercase'>active</Badge></div>
+            }else if(status == 'landed'){
+                return <div><Badge className='text-white bg-green-700 hover:bg-green-900 uppercase'>landed</Badge></div>
+            }else if(status == 'incident'){
+                return <div><Badge className='text-white bg-rose-700 hover:bg-rose-900 uppercase'>incident</Badge></div>
+            }else if(status == 'diverted'){
+                return <div><Badge className='text-white bg-amber-700 hover:bg-amber-900 uppercase'>diverted</Badge></div>
+            }
+        }
+    },
     {
         id: "airline_name",
         header: "Airline Name",
         cell: ({ row }) => {
-            const [airline_name, setAirlineName] = React.useState(row.original.airline_name);
+            return (
+                <span>{row.original.airline_name}</span>
+            );
+            // const [airline_name, setAirlineName] = React.useState(row.original.airline_name);
             
-            // Track the quantity change in the state
-            const handleAirlineNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setAirlineName(String(e.target.value));
-                row.original.airline_name = String(e.target.value); // Update row data
-            };
-            if(!row.getIsSelected?.()){
-                return (
-                    <span>{row.original.airline_name}</span>
-                );
-            }else{
-                return (
-                    <Input
-                        value={airline_name || ""}
-                        onChange={handleAirlineNameChange}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary"
-                    />
-                );
-            }
+            // // Track the quantity change in the state
+            // const handleAirlineNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            //     setAirlineName(String(e.target.value));
+            //     row.original.airline_name = String(e.target.value); // Update row data
+            // };
+            // if(!row.getIsSelected?.()){
+            //     return (
+            //         <span>{row.original.airline_name}</span>
+            //     );
+            // }else{
+            //     return (
+            //         <Input
+            //             value={airline_name || ""}
+            //             onChange={handleAirlineNameChange}
+            //             disabled={!row.getIsSelected()} // Allow editing only when selected
+            //             className="w-fit border-primary"
+            //         />
+            //     );
+            // }
             
         },
     },    
     {
-        id: "airline_code_iata",
-        header: "Airline Name IATA",
+        id: "airline_iata",
+        header: "Airline Code IATA",
         cell: ({ row }) => {
-            const [airline_code_iata, setAirlineNameIATA] = React.useState(row.original.airline_code_iata);
-            
+            // const [airline_iata, setAirlineNameIATA] = React.useState(row.original.airline_iata);
+            return (
+                <span className='uppercase'>{row.original.airline_iata}</span>
+            );
             // Track the quantity change in the state
-            const handleAirlineNameIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setAirlineNameIATA(String(e.target.value));
-                row.original.airline_code_iata = String(e.target.value.toUpperCase()); // Update row data
-            };
-            if(!row.getIsSelected?.()){
-                return (
-                    <span className='uppercase'>{row.original.airline_code_iata}</span>
-                );
-            }else{
-                return (
-                    <Input
-                        value={airline_code_iata || ""}
-                        onChange={handleAirlineNameIATAChange}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
-                );
-            }
+            // const handleAirlineNameIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            //     setAirlineNameIATA(String(e.target.value));
+            //     row.original.airline_iata = String(e.target.value.toUpperCase()); // Update row data
+            // };
+            // if(!row.getIsSelected?.()){
+            //     return (
+            //         <span className='uppercase'>{row.original.airline_iata}</span>
+            //     );
+            // }else{
+            //     return (
+            //         <Input
+            //             value={airline_iata || ""}
+            //             onChange={handleAirlineNameIATAChange}
+            //             disabled={!row.getIsSelected()} // Allow editing only when selected
+            //             className="w-fit border-primary uppercase"
+            //         />
+            //     );
+            // }
             
         },
     },   
     {
-        id: "airline_code_icao",
-        header: "Airline Name ICAO",
+        id: "airline_icao",
+        header: "Airline Code ICAO",
         cell: ({ row }) => {
-            const [airline_code_icao, setAirlineNameICAO] = React.useState(row.original.airline_code_icao);
+            return (
+                <span className='uppercase'>{row.original.airline_icao}</span>
+            );
+            // const [airline_icao, setAirlineNameICAO] = React.useState(row.original.airline_icao);
             
-            // Track the quantity change in the state
-            const handleAirlineNameICAOChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setAirlineNameICAO(String(e.target.value));
-                row.original.airline_code_icao = String(e.target.value.toUpperCase()); // Update row data
-            };
-            if(!row.getIsSelected?.()){
-                return (
-                    <span className='uppercase'>{row.original.airline_code_icao}</span>
-                );
-            }else{
-                return (
-                    <Input
-                        value={airline_code_icao || ""}
-                        onChange={handleAirlineNameICAOChange}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
-                );
-            }
+            // // Track the quantity change in the state
+            // const handleAirlineNameICAOChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            //     setAirlineNameICAO(String(e.target.value));
+            //     row.original.airline_icao = String(e.target.value.toUpperCase()); // Update row data
+            // };
+            // if(!row.getIsSelected?.()){
+            //     return (
+            //         <span className='uppercase'>{row.original.airline_icao}</span>
+            //     );
+            // }else{
+            //     return (
+            //         <Input
+            //             value={airline_icao || ""}
+            //             onChange={handleAirlineNameICAOChange}
+            //             disabled={!row.getIsSelected()} // Allow editing only when selected
+            //             className="w-fit border-primary uppercase"
+            //         />
+            //     );
+            // }
             
         },
     },   
     {
-        id: "flight_number",
+        id: "flight_number_iata",
         header: "Flight Number",
         cell: ({ row }) => {
-            const [flight_number, setFlightNumber] = React.useState(row.original.flight_number);
+
+            return (
+                <span className='uppercase'>{row.original.flight_number_iata}</span>
+            );
+            // const [flight_number_iata, setFlightNumber] = React.useState(row.original.flight_number_iata);
+            
+            // // Track the quantity change in the state
+            // const handleFlightNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            //     setFlightNumber(String(e.target.value));
+            //     row.original.flight_number_iata = String(e.target.value.toUpperCase()); // Update row data
+            // };
+
+            // if(!row.getIsSelected?.()){
+            //     return (
+            //         <span className='uppercase'>{row.original.flight_number_iata}</span>
+            //     );
+            // }else{
+            //     return (
+            //         <Input
+            //             value={flight_number_iata || ""}
+            //             onChange={handleFlightNumberChange}
+            //             disabled={!row.getIsSelected()} // Allow editing only when selected
+            //             className="w-fit border-primary uppercase"
+            //         />
+            //     );
+            // }
+            
+        },
+    },
+    {
+        id: "aircraft_type_iata",
+        header: "Aircraft Type",
+        cell: ({ row }) => {
+            const [aircraft_type_iata, setAircraftRegistration] = React.useState(row.original.aircraft_type_iata);
             
             // Track the quantity change in the state
-            const handleFlightNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setFlightNumber(String(e.target.value));
-                row.original.flight_number = String(e.target.value.toUpperCase()); // Update row data
+            const handleAircraftRegistrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                setAircraftRegistration(String(e.target.value));
+                row.original.aircraft_type_iata = String(e.target.value.toUpperCase()); // Update row data
             };
-
             if(!row.getIsSelected?.()){
                 return (
-                    <span className='uppercase'>{row.original.flight_number}</span>
+                    <span className='uppercase'>{row.original.aircraft_type_iata}</span>
                 );
             }else{
                 return (
                     <Input
-                        value={flight_number || ""}
-                        onChange={handleFlightNumberChange}
+                        value={aircraft_type_iata || ""}
+                        onChange={handleAircraftRegistrationChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
                         className="w-fit border-primary uppercase"
                     />
@@ -241,151 +329,24 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "start_effective_date",
-        header: "Start Effective Date",
+        id: "aircraft_registration",
+        header: "Aircraft Registration",
         cell: ({ row }) => {
-            // Convert row.original.start_date to a Date object (handle null & invalid cases)
-            const initialDate = row.original.start_effective_date ? new Date(row.original.start_effective_date) : null;
-            const [start_effective_date, setStartDate] = React.useState<Date | null>(initialDate);
-    
-            const handleDateChange = (date: Date | undefined) => {
-                if (date) {
-                    setStartDate(date);
-                    row.original.start_effective_date = date; // 🔹 Persist date in row data
-                }
-            };
-    
-            if (!row.getIsSelected?.()) {
-                return (
-                    <span>
-                        {start_effective_date ? format(start_effective_date, "yyyy-MM-dd") : "No Date"}
-                    </span>
-                );
-            } else {
-                return (
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-fit justify-start text-left font-normal",
-                                    !start_effective_date && "text-muted-foreground"
-                                )}
-                            >
-                                <CalendarIcon />
-                                {start_effective_date ? format(start_effective_date, "yyyy-MM-dd") : <span>Pick a date</span>}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={start_effective_date}
-                                onSelect={handleDateChange} // 🔹 Persist date selection
-                                initialFocus
-                            />
-                        </PopoverContent>
-                    </Popover>
-                );
-            }
-        },
-    },
-    {
-        id: "end_effective_date",
-        header: "End Effective Date",
-        cell: ({ row }) => {
-            // Convert row.original.start_date to a Date object (handle null & invalid cases)
-            const initialDate = row.original.end_effective_date ? new Date(row.original.end_effective_date) : null;
-            const [end_effective_date, setEndDate] = React.useState<Date | null>(initialDate);
-    
-            const handleDateChange = (date: Date | undefined) => {
-                if (date) {
-                    setEndDate(date);
-                    row.original.end_effective_date = date; // 🔹 Persist date in row data
-                }
-            };
-    
-            if (!row.getIsSelected?.()) {
-                return (
-                    <span>
-                        {end_effective_date ? format(end_effective_date, "yyyy-MM-dd") : "No Date"}
-                    </span>
-                );
-            } else {
-                return (
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-fit justify-start text-left font-normal",
-                                    !end_effective_date && "text-muted-foreground"
-                                )}
-                            >
-                                <CalendarIcon />
-                                {end_effective_date ? format(end_effective_date, "yyyy-MM-dd") : <span>Pick a date</span>}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={end_effective_date}
-                                onSelect={handleDateChange} // 🔹 Persist date selection
-                                initialFocus
-                            />
-                        </PopoverContent>
-                    </Popover>
-                );
-            }
-        },
-    },
-    {
-        id: "flight_time",
-        header: "Flight Time",
-        cell: ({ row }) => {
-            const [flight_time, setFlightTime] = React.useState(row.original.flight_time);
-            
-            // Track the quantity change in the state
-            const handleFlightTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setFlightTime(String(e.target.value));
-                row.original.flight_time = String(e.target.value); // Update row data
-            };
-            if(!row.getIsSelected?.()){
-                return (
-                    <span className='uppercase'>{row.original.flight_time}</span>
-                );
-            }else{
-                return (
-                    <Input
-                        type='time'
-                        value={flight_time || ""}
-                        onChange={handleFlightTimeChange}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary"
-                    />
-                );
-            }
-            
-        },
-    },
-    {
-        id: "aircraft_types",
-        header: "Aircraft Type",
-        cell: ({ row }) => {
-            const [aircraft_types, setAircraftType] = React.useState(row.original.aircraft_types);
+            const [aircraft_registration, setAircraftRegistration] = React.useState(row.original.aircraft_registration);
             
             // Track the quantity change in the state
             const handleAircraftTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setAircraftType(String(e.target.value));
-                row.original.aircraft_types = String(e.target.value.toUpperCase()); // Update row data
+                setAircraftRegistration(String(e.target.value));
+                row.original.aircraft_registration = String(e.target.value.toUpperCase()); // Update row data
             };
             if(!row.getIsSelected?.()){
                 return (
-                    <span className='uppercase'>{row.original.aircraft_types}</span>
+                    <span className='uppercase'>{row.original.aircraft_registration}</span>
                 );
             }else{
                 return (
                     <Input
-                        value={aircraft_types || ""}
+                        value={aircraft_registration || ""}
                         onChange={handleAircraftTypeChange}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
                         className="w-fit border-primary uppercase"
@@ -396,14 +357,42 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "a_des_iata",
-        header: "Destination",
+        id: "d_origin_iata",
+        header: "Origin",
         cell: ({ row }) => {
-            const [a_des_iata, setDesIATA] = React.useState(row.original.a_des_iata);
+            const [d_origin_iata, setOriginIATA] = React.useState(row.original.d_origin_iata);
             
             // Track the quantity change in the state
-            const handleDesIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setDesIATA(String(e.target.value));
+            const handleOriginIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                setOriginIATA(String(e.target.value));
+                row.original.d_origin_iata = String(e.target.value.toUpperCase()); // Update row data
+            };
+            if(!row.getIsSelected?.()){
+                return (
+                    <span className='uppercase'>{row.original.d_origin_iata}</span>
+                );
+            }else{
+                return (
+                    <Input
+                        value={d_origin_iata || ""}
+                        onChange={handleOriginIATAChange}
+                        disabled={!row.getIsSelected()} // Allow editing only when selected
+                        className="w-fit border-primary uppercase"
+                    />
+                );
+            }
+            
+        },
+    },
+    {
+        id: "a_des_iata",
+        header: "Destination 1",
+        cell: ({ row }) => {
+            const [a_des_iata, setDesIATA1] = React.useState(row.original.a_des_iata);
+            
+            // Track the quantity change in the state
+            const handleDesIATA1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+                setDesIATA1(String(e.target.value));
                 row.original.a_des_iata = String(e.target.value.toUpperCase()); // Update row data
             };
             if(!row.getIsSelected?.()){
@@ -414,7 +403,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
                 return (
                     <Input
                         value={a_des_iata || ""}
-                        onChange={handleDesIATAChange}
+                        onChange={handleDesIATA1Change}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
                         className="w-fit border-primary uppercase"
                     />
@@ -424,216 +413,550 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "a_ori_iata1",
-        header: "Origin 1",
+        accessorKey: "d_origin_terminal",
+        header: "Terminal",
         cell: ({ row }) => {
-            const [a_ori_iata1, setOriIATA1] = React.useState(row.original.a_ori_iata1);
-            
-            // Track the quantity change in the state
-            const handleOriIATA1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setOriIATA1(String(e.target.value));
-                row.original.a_ori_iata1 = String(e.target.value.toUpperCase()); // Update row data
-            };
+            const { data: terminals } = getTerminal(); // Fetch companies
+            const [selectedTerminal, setSelectedTerminal] = useState(row.original.d_origin_terminal || null);
+            if (!row) return null; 
             if(!row.getIsSelected?.()){
                 return (
-                    <span className='uppercase'>{row.original.a_ori_iata1}</span>
+                    <span>{row.original.d_origin_terminal}</span>
                 );
-            }else{
+            }else {
                 return (
-                    <Input
-                        value={a_ori_iata1 || ""}
-                        onChange={handleOriIATA1}
+                    <Select
+                        value={selectedTerminal ? (Array.isArray(terminals) ? terminals.find(terminal => terminal?.id === row.original.d_origin_terminal)?.terminal || undefined : undefined) : undefined}
+                        onValueChange={(value) => {
+                            const selected = Array.isArray(terminals) ? terminals.find((terminal) => terminal?.terminal === value) : null;
+                            if (selected) {
+                                row.original.d_origin_terminal = selected.id;
+                                setSelectedTerminal(selected.id);
+                            }
+                        }}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose terminal" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.isArray(terminals) && terminals.map((terminal) => (
+                                <SelectItem
+                                    key={terminal?.id}
+                                    value={terminal?.terminal || ''}
+                                >
+                                    {terminal?.terminal}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                );
+            }
+        },
+    },
+    {
+        accessorKey: "d_origin_gate",
+        header: "Boarding Gate",
+        cell: ({ row }) => {
+            const { data: gates } = getGate(); // Fetch companies
+            const [selectedGate, setSelectedGate] = useState(row.original.d_origin_gate || null);
+            if (!row) return null; 
+            if(!row.getIsSelected?.()){
+                return (
+                    <span>{row.original.d_origin_terminal}</span>
+                );
+            }else {
+                return (
+                    <Select
+                        value={selectedGate ? (Array.isArray(gates) ? gates.find(gate => gate?.id === row.original.d_origin_gate)?.gate || undefined : undefined) : undefined}
+                        onValueChange={(value) => {
+                            const selected = Array.isArray(gates) ? gates.find((gate) => gate?.gate === value) : null;
+                            if (selected) {
+                                row.original.d_origin_gate = selected.id;
+                                setSelectedGate(selected.id);
+                            }
+                        }}
+                        disabled={!row.getIsSelected()} // Allow editing only when selected
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose user station" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.isArray(gates) && gates.map((gate) => (
+                                <SelectItem
+                                    key={gate?.id}
+                                    value={gate?.gate || ''}
+                                >
+                                    {gate?.gate}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 );
             }
             
         },
     },
     {
-        id: "a_ori_iata2",
-        header: "Origin 2",
+        accessorKey: "d_parking_stand",
+        header: "Parking Stand",
         cell: ({ row }) => {
-            const [a_ori_iata2, setOriIATA2] = React.useState(row.original.a_ori_iata2);
-            
-            // Track the quantity change in the state
-            const handleOriIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setOriIATA2(String(e.target.value));
-                row.original.a_ori_iata2 = String(e.target.value.toUpperCase()); // Update row data
-            };
+            const { data: parking_stands } = getParkingStand(); // Fetch companies
+            const [selectedParkingStand, setSelectedParkingStand] = useState(row.original.d_parking_stand || null);
+            if (!row) return null;
             if(!row.getIsSelected?.()){
                 return (
-                    <span className='uppercase'>{row.original.a_ori_iata2}</span>
+                    <span>{row.original.d_origin_terminal}</span>
                 );
-            }else{
+            }else { 
                 return (
-                    <Input
-                        value={a_ori_iata2 || ""}
-                        onChange={handleOriIATAChange}
+                    <Select
+                        value={selectedParkingStand ? (Array.isArray(parking_stands) ? parking_stands.find(parking => parking?.id === row.original.d_parking_stand)?.parking_stand || undefined : undefined) : undefined}
+                        onValueChange={(value) => {
+                            const selected = Array.isArray(parking_stands) ? parking_stands.find((parking) => parking?.parking_stand === value) : null;
+                            if (selected) {
+                                row.original.d_parking_stand = selected.id;
+                                setSelectedParkingStand(selected.id);
+                            }
+                        }}
                         disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose user station" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.isArray(parking_stands) && parking_stands.map((parking) => (
+                                <SelectItem
+                                    key={parking?.id}
+                                    value={parking?.parking_stand || ''}
+                                >
+                                    {parking?.parking_stand}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 );
             }
-            
         },
     },
     {
-        id: "a_ori_iata3",
-        header: "Origin 3",
+        id: "flight_date",
+        header: "Flight Date",
         cell: ({ row }) => {
-            const [a_ori_iata3, setOriIATA3] = React.useState(row.original.a_ori_iata3);
-            
-            // Track the quantity change in the state
-            const handleOriIATA3Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setOriIATA3(String(e.target.value));
-                row.original.a_ori_iata3 = String(e.target.value.toUpperCase()); // Update row data
-            };
-            if(!row.getIsSelected?.()){
+            const flight_date = row.original.flight_date;
+            // Convert row.original.start_date to a Date object (handle null & invalid cases)
+            // const initialDate = row.original.flight_date ? new Date(row.original.flight_date) : null;
+            // const [flight_date, setStartDate] = React.useState<Date | null>(initialDate);
+    
+            // const handleDateChange = (date: Date | undefined) => {
+            //     if (date) {
+            //         setStartDate(date);
+            //         row.original.flight_date = date; // 🔹 Persist date in row data
+            //     }
+            // };
+    
+            if (!row.getIsSelected?.()) {
                 return (
-                    <span className='uppercase'>{row.original.a_ori_iata3}</span>
+                    <span>
+                        {flight_date ? format(flight_date, "yyyy-MM-dd") : "No Date"}
+                    </span>
                 );
-            }else{
+            } else {
                 return (
-                    <Input
-                        value={a_ori_iata3 || ""}
-                        onChange={handleOriIATA3Change}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
+                    <span>
+                        {flight_date ? format(flight_date, "yyyy-MM-dd") : "No Date"}
+                    </span>
                 );
+                // return (
+                //     <Popover>
+                //         <PopoverTrigger asChild>
+                //             <Button
+                //                 variant={"outline"}
+                //                 className={cn(
+                //                     "w-fit justify-start text-left font-normal",
+                //                     !flight_date && "text-muted-foreground"
+                //                 )}
+                //             >
+                //                 <CalendarIcon />
+                //                 {flight_date ? format(flight_date, "yyyy-MM-dd") : <span>Pick a date</span>}
+                //             </Button>
+                //         </PopoverTrigger>
+                //         <PopoverContent className="w-auto p-0" align="start">
+                //             <Calendar
+                //                 mode="single"
+                //                 selected={flight_date}
+                //                 onSelect={handleDateChange} // 🔹 Persist date selection
+                //                 initialFocus
+                //             />
+                //         </PopoverContent>
+                //     </Popover>
+                // );
             }
-            
         },
     },
     {
-        id: "a_ori_iata4",
-        header: "Origin 4",
+        id: "d_flight_std",
+        header: "STD",
         cell: ({ row }) => {
-            const [a_ori_iata_4, setOriIATA4] = React.useState(row.original.a_ori_iata_4);
-            
-            // Track the quantity change in the state
-            const handleOriIATA4Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setOriIATA4(String(e.target.value));
-                row.original.a_ori_iata_4 = String(e.target.value.toUpperCase()); // Update row data
+            // Convert row.original.start_date to a Date object (handle null & invalid cases)
+            const initialDate = row.original.d_flight_std ? new Date(row.original.d_flight_std) : null;
+            const [d_flight_std, setEndDate] = React.useState<Date | null>(initialDate);
+    
+            const handleDateChange = (date: Date | undefined) => {
+                if (date) {
+                    setEndDate(date);
+                    row.original.d_flight_std = date; // 🔹 Persist date in row data
+                }
             };
-            if(!row.getIsSelected?.()){
+    
+            if (!row.getIsSelected?.()) {
                 return (
-                    <span className='uppercase'>{row.original.a_ori_iata_4}</span>
+                    <span>
+                        {/* {d_flight_std ? format(d_flight_std, "PPpp") : "No Date"} */}
+                        {d_flight_std ? format(d_flight_std, "hh:mm:ss") : "No Date"}
+                    </span>
                 );
-            }else{
+            } else {
                 return (
-                    <Input
-                        value={a_ori_iata_4 || ""}
-                        onChange={handleOriIATA4Change}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-fit justify-start text-left font-normal",
+                                    !d_flight_std && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon />
+                                {d_flight_std ? format(d_flight_std, "Pp") : <span>Pick a date</span>}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={d_flight_std}
+                                onSelect={handleDateChange} // 🔹 Persist date selection
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
                 );
             }
-            
+        },
+    },    
+    {
+        id: "d_flight_etd",
+        header: "ETD",
+        cell: ({ row }) => {
+            // Convert row.original.start_date to a Date object (handle null & invalid cases)
+            const initialDate = row.original.d_flight_etd ? new Date(row.original.d_flight_etd) : null;
+            const [d_flight_etd, setEndDate] = React.useState<Date | null>(initialDate);
+    
+            const handleDateChange = (date: Date | undefined) => {
+                if (date) {
+                    setEndDate(date);
+                    row.original.d_flight_etd = date; // 🔹 Persist date in row data
+                }
+            };
+    
+            if (!row.getIsSelected?.()) {
+                return (
+                    <span>
+                        {/* {d_flight_etd ? format(d_flight_etd, "PPpp") : "No Date"} */}
+                        {d_flight_etd ? format(d_flight_etd, "PPpp") : "No Date"}
+                    </span>
+                );
+            } else {
+                return (
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-fit justify-start text-left font-normal",
+                                    !d_flight_etd && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon />
+                                {d_flight_etd ? format(d_flight_etd, "Pp") : <span>Pick a date</span>}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={d_flight_etd}
+                                onSelect={handleDateChange} // 🔹 Persist date selection
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                );
+            }
         },
     },
-   // ✅ "All Days" Checkbox (Forces Table to Re-render)
-  {
-    id: "All",
-    header: "All Days",
-    cell: ({ row, table }) => {
-      const isSelected = row.getIsSelected?.() ?? false;
-      const [isAllChecked, setIsAllChecked] = useState(
-        daysOfWeek.every((day) => row.original[day.id] ?? false)
-      );
-      const [, forceUpdate] = useState(0); // Force re-render state
-
-      useEffect(() => {
-        setIsAllChecked(daysOfWeek.every((day) => row.original[day.id] ?? false));
-      }, [row.original]);
-
-      const handleAllCheckedChange = (value: boolean) => {
-        daysOfWeek.forEach((day) => (row.original[day.id] = value));
-        row._valuesCache = { ...row.original }; // 🔹 Forces Table Update
-
-        setIsAllChecked(value);
-        forceUpdate((prev) => prev + 1); // 🔹 Force Re-render
-        table.setRowSelection({ ...table.getState().rowSelection }); // 🔹 Re-trigger Table Render
-      };
-
-      return (
-        <Checkbox
-          disabled={!isSelected}
-          checked={isAllChecked}
-          onCheckedChange={(value) => handleAllCheckedChange(!!value)}
-          aria-label="Select all days"
-        />
-      );
+    {
+        id: "d_flight_atd",
+        header: "ATD",
+        cell: ({ row }) => {
+            // Convert row.original.start_date to a Date object (handle null & invalid cases)
+            const initialDate = row.original.d_flight_atd ? new Date(row.original.d_flight_atd) : null;
+            const [d_flight_atd, setEndDate] = React.useState<Date | null>(initialDate);
+    
+            const handleDateChange = (date: Date | undefined) => {
+                if (date) {
+                    setEndDate(date);
+                    row.original.d_flight_atd = date; // 🔹 Persist date in row data
+                }
+            };
+    
+            if (!row.getIsSelected?.()) {
+                return (
+                    <span>
+                        {/* {d_flight_atd ? format(d_flight_atd, "PPpp") : "No Date"} */}
+                        {d_flight_atd ? format(d_flight_atd, "PPpp") : "No Date"}
+                    </span>
+                );
+            } else {
+                return (
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-fit justify-start text-left font-normal",
+                                    !d_flight_atd && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon />
+                                {d_flight_atd ? format(d_flight_atd, "Pp") : <span>Pick a date</span>}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={d_flight_atd}
+                                onSelect={handleDateChange} // 🔹 Persist date selection
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                );
+            }
+        },
     },
-  },
+    
+//     {
+//         id: "d_origin_terminal",
+//         header: "Terminal",
+//         cell: ({ row }) => {
+//             const [d_origin_terminal, setOriginTerminal] = React.useState(row.original.d_origin_terminal);
+            
+//             // Track the quantity change in the state
+//             const handleOriginTerminal = (e: React.ChangeEvent<HTMLInputElement>) => {
+//                 setOriginTerminal(String(e.target.value));
+//                 row.original.d_origin_terminal = String(e.target.value.toUpperCase()); // Update row data
+//             };
+//             if(!row.getIsSelected?.()){
+//                 return (
+//                     <span className='uppercase'>{row.original.d_origin_terminal}</span>
+//                 );
+//             }else{
+//                 return (
+//                     <Input
+//                         value={d_origin_terminal || ""}
+//                         onChange={handleOriginTerminal}
+//                         disabled={!row.getIsSelected()} // Allow editing only when selected
+//                         className="w-fit border-primary uppercase"
+//                     />
+//                 );
+//             }
+            
+//         },
+//     },
+//     {
+//         id: "d_origin_gate",
+//         header: "Boarding Gate",
+//         cell: ({ row }) => {
+//             const [d_origin_gate, setBoardingGate] = React.useState(row.original.d_origin_gate);
+            
+//             // Track the quantity change in the state
+//             const handleBoardingGateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//                 setBoardingGate(String(e.target.value));
+//                 row.original.d_origin_gate = String(e.target.value.toUpperCase()); // Update row data
+//             };
+//             if(!row.getIsSelected?.()){
+//                 return (
+//                     <span className='uppercase'>{row.original.d_origin_gate}</span>
+//                 );
+//             }else{
+//                 return (
+//                     <Input
+//                         value={d_origin_gate || ""}
+//                         onChange={handleBoardingGateChange}
+//                         disabled={!row.getIsSelected()} // Allow editing only when selected
+//                         className="w-fit border-primary uppercase"
+//                     />
+//                 );
+//             }
+            
+//         },
+//     },
+// {
+//     id: "d_parking_stand",
+//     header: "Parking Stand",
+//     cell: ({ row }) => {
+//         const [d_parking_stand, setFlightTime] = React.useState(row.original.d_parking_stand);
+        
+//         // Track the quantity change in the state
+//         const handleParkingStandChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//             console.log(d_parking_stand);
+//             setFlightTime(String(e.target.value));
+//             row.original.d_parking_stand = String(e.target.value); // Update row data
+//         };
+//         if(!row.getIsSelected?.()){
+//             return (
+//                 <span className='uppercase'>{row.original.d_parking_stand}</span>
+//             );
+//         }else{
+//             return (
+//                 <Input
+//                     value={d_parking_stand || ""}
+//                     onChange={handleParkingStandChange}
+//                     disabled={!row.getIsSelected()} // Allow editing only when selected
+//                     className="w-fit border-primary"
+//                 />
+//             );
+//         }
+        
+//     },
+// },
+//     {
+//         id: "d_des_iata4",
+//         header: "Destination 4",
+//         cell: ({ row }) => {
+//             const [d_des_iata4, setDesIATA4] = React.useState(row.original.d_des_iata4);
+            
+//             // Track the quantity change in the state
+//             const handleDesIATA4Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+//                 setDesIATA4(String(e.target.value));
+//                 row.original.d_des_iata4 = String(e.target.value.toUpperCase()); // Update row data
+//             };
+//             if(!row.getIsSelected?.()){
+//                 return (
+//                     <span className='uppercase'>{row.original.d_des_iata4}</span>
+//                 );
+//             }else{
+//                 return (
+//                     <Input
+//                         value={d_des_iata4 || ""}
+//                         onChange={handleDesIATA4Change}
+//                         disabled={!row.getIsSelected()} // Allow editing only when selected
+//                         className="w-fit border-primary uppercase"
+//                     />
+//                 );
+//             }
+            
+//         },
+//     },
+//    // ✅ "All Days" Checkbox (Forces Table to Re-render)
+//   {
+//     id: "All",
+//     header: "All Days",
+//     cell: ({ row, table }) => {
+//       const isSelected = row.getIsSelected?.() ?? false;
+//       const [isAllChecked, setIsAllChecked] = useState(
+//         daysOfWeek.every((day) => row.original[day.id] ?? false)
+//       );
+//       const [, forceUpdate] = useState(0); // Force re-render state
 
-  // ✅ Individual Day Checkboxes (Forces Table to Re-render)
-  ...daysOfWeek.map((day) => ({
-    id: day.id,
-    header: day.label,
-    cell: ({ row, table }) => {
-      const isSelected = row.getIsSelected?.() ?? false;
-      const [checked, setChecked] = useState(row.original[day.id] ?? false);
-      const [, forceUpdate] = useState(0); // Force re-render state
+//       useEffect(() => {
+//         setIsAllChecked(daysOfWeek.every((day) => row.original[day.id] ?? false));
+//       }, [row.original]);
 
-      useEffect(() => {
-        setChecked(row.original[day.id] ?? false);
-      }, [row.original[day.id]]);
+//       const handleAllCheckedChange = (value: boolean) => {
+//         daysOfWeek.forEach((day) => (row.original[day.id] = value));
+//         row._valuesCache = { ...row.original }; // 🔹 Forces Table Update
 
-      const handleChange = (value: boolean) => {
-        row.original[day.id] = value;
-        setChecked(value);
+//         setIsAllChecked(value);
+//         forceUpdate((prev) => prev + 1); // 🔹 Force Re-render
+//         table.setRowSelection({ ...table.getState().rowSelection }); // 🔹 Re-trigger Table Render
+//       };
 
-        // ✅ If any day is unchecked, uncheck "All"
-        const allChecked = daysOfWeek.every((d) => row.original[d.id]);
-        row.original.All = allChecked;
+//       return (
+//         <Checkbox
+//           disabled={!isSelected}
+//           checked={isAllChecked}
+//           onCheckedChange={(value) => handleAllCheckedChange(!!value)}
+//           aria-label="Select all days"
+//         />
+//       );
+//     },
+//   },
 
-        row._valuesCache = { ...row.original }; // 🔹 Forces Table Update
-        forceUpdate((prev) => prev + 1); // 🔹 Force Re-render
-        table.setRowSelection({ ...table.getState().rowSelection }); // 🔹 Re-trigger Table Render
-      };
+//   // ✅ Individual Day Checkboxes (Forces Table to Re-render)
+//   ...daysOfWeek.map((day) => ({
+//     id: day.id,
+//     header: day.label,
+//     cell: ({ row, table }) => {
+//       const isSelected = row.getIsSelected?.() ?? false;
+//       const [checked, setChecked] = useState(row.original[day.id] ?? false);
+//       const [, forceUpdate] = useState(0); // Force re-render state
 
-      return (
-        <Checkbox
-          disabled={!isSelected}
-          checked={checked}
-          onCheckedChange={(value) => handleChange(!!value)}
-          aria-label={`Select ${day.label}`}
-        />
-      );
-    },
-  })),
+//       useEffect(() => {
+//         setChecked(row.original[day.id] ?? false);
+//       }, [row.original[day.id]]);
+
+//       const handleChange = (value: boolean) => {
+//         row.original[day.id] = value;
+//         setChecked(value);
+
+//         // ✅ If any day is unchecked, uncheck "All"
+//         const allChecked = daysOfWeek.every((d) => row.original[d.id]);
+//         row.original.All = allChecked;
+
+//         row._valuesCache = { ...row.original }; // 🔹 Forces Table Update
+//         forceUpdate((prev) => prev + 1); // 🔹 Force Re-render
+//         table.setRowSelection({ ...table.getState().rowSelection }); // 🔹 Re-trigger Table Render
+//       };
+
+//       return (
+//         <Checkbox
+//           disabled={!isSelected}
+//           checked={checked}
+//           onCheckedChange={(value) => handleChange(!!value)}
+//           aria-label={`Select ${day.label}`}
+//         />
+//       );
+//     },
+//   })),
   
-    {
-        id: "remark",
-        header: "Remark",
-        cell: ({ row }) => {
-            const [remark, setRemark] = React.useState(row.original.remark);
+//     {
+//         id: "remark",
+//         header: "Remark",
+//         cell: ({ row }) => {
+//             const [remark, setRemark] = React.useState(row.original.remark);
             
-            // Track the quantity change in the state
-            const handleRemarkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setRemark(String(e.target.value));
-                row.original.remark = String(e.target.value); // Update row data
-            };
+//             // Track the quantity change in the state
+//             const handleRemarkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//                 setRemark(String(e.target.value));
+//                 row.original.remark = String(e.target.value); // Update row data
+//             };
 
-            if(!row.getIsSelected?.()){
-                return (
-                    <span>{row.original.remark}</span>
-                );
-            }else{
-                return (
-                    <Input
-                        value={remark || ""}
-                        onChange={handleRemarkChange}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary"
-                    />
-                );
-            }
+//             if(!row.getIsSelected?.()){
+//                 return (
+//                     <span>{row.original.remark}</span>
+//                 );
+//             }else{
+//                 return (
+//                     <Input
+//                         value={remark || ""}
+//                         onChange={handleRemarkChange}
+//                         disabled={!row.getIsSelected()} // Allow editing only when selected
+//                         className="w-fit border-primary"
+//                     />
+//                 );
+//             }
             
-        },
-    },
+//         },
+//     },
 ];
