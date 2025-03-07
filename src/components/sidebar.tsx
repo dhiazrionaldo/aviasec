@@ -47,8 +47,8 @@ const adminSidebarItems: SidebarItems = {
 
   links: [
     { label: 'Dashboard', href: '/admin/home', icon: LineChartIcon },
-    { label: 'Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
-    { label: 'Manual Schedule Upload', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
+    { label: 'Daily Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
+    { label: 'Seasonal Schedule', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
     // { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
     // { label: 'Order Report', href: '/admin/order_report', icon: ListCheckIcon },
     // { label: 'Order', href: '/admin/proposal_order', icon: ListOrderedIcon },
@@ -147,8 +147,8 @@ const adminSidebarItems: SidebarItems = {
 const superAdminSidebarItems: SidebarItems = {
   links: [
     { label: 'Dashboard', href: '/admin/home', icon: LineChartIcon },
-    { label: 'Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
-    { label: 'Manual Schedule Upload', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
+    { label: 'Daily Flight Schedule', href: '/admin/flight_schedule', icon: PlaneIcon },
+    { label: 'Seasonal Schedule', href: '/admin/schedule_manual', icon: CalendarArrowUpIcon },
     // { label: 'Manual UnSchedule Upload', href: '/admin/unschedule_manual', icon: CalendarMinus },
     // { label: 'Lounge Stocks', href: '/admin/lounge', icon: Martini },
     // { label: 'Order', href: '/admin/proposal_order', icon: ListOrderedIcon },

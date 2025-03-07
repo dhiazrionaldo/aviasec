@@ -35,6 +35,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -344,6 +345,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Rows</DialogTitle>
+            <DialogDescription className="font-thin text-xs">Fill with number of row you want to add</DialogDescription>
           </DialogHeader>
           <Input
             type="number"

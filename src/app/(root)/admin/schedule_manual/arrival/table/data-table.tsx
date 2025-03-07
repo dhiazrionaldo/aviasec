@@ -35,6 +35,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -202,6 +203,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     }
   };
 
+  const handleRemoveRow = (index: number) => {
+    setTableData((prevData) => prevData.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       <div className="flex md:flex-row grid md:grid-cols-7 gap-3 items-center py-4">
@@ -296,11 +301,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, index) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
+                  <TableCell>
+                    <Button variant="destructive" onClick={() => handleRemoveRow(index)}>
+                      <Trash2Icon size={15} />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -342,6 +352,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Rows</DialogTitle>
+            <DialogDescription className="font-thin text-xs">Fill with number of row you want to add</DialogDescription>
           </DialogHeader>
           <Input
             type="number"

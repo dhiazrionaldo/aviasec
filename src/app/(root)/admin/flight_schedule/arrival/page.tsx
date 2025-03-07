@@ -1,8 +1,8 @@
 'use client'
 
-import { DataTable } from '@/app/(root)/admin/setting/master_company/table/data-table'; // Adjust the import based on your actual DataTable component path
-import getDepartureManualFlightSchedule from '@/app/hook/departure_flight_schedule/departure_flight_schedule';
-import { columns } from '@/app/(root)/admin/setting/master_company/table/columns'; // Assuming you have a columns definition for the table
+import { DataTable } from '@/app/(root)/admin/flight_schedule/arrival/table/data-table'; // Adjust the import based on your actual DataTable component path
+import getArrivalManualFlightSchedule from '@/app/hook/arrival_flight_schedule/arrival_flight_schedule';
+import { columns } from '@/app/(root)/admin/flight_schedule/arrival/table/columns'; // Assuming you have a columns definition for the table
 import { DatePickerWithRange } from './dateRange';
 import { addDays } from "date-fns"; 
 import { DateRange } from "react-day-picker";
@@ -25,7 +25,7 @@ export default function ArrivalFlightSchedule() {
     to: addDays(today, 1),
   });
 
-  const { isFetching: isFetching, data: departure_flight_schedule, error: error, refetch} = getDepartureManualFlightSchedule(searchParams);
+  const { isFetching: isFetching, data: departure_flight_schedule, error: error, refetch} = getArrivalManualFlightSchedule(searchParams);
   
   useEffect(() => {
     if (error) {

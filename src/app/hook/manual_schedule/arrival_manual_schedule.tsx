@@ -248,6 +248,7 @@ export async function submitScheduleArrival(datas) {
                     airline_iata: entry.airline_code_iata,
                     airline_icao: entry.airline_code_icao,
                     flight_number: entry.flight_number,
+                    flight_number_iata: entry.airline_code_iata+entry.flight_number,
                     aircraft_type_iata: entry.aircraft_types,
                     schedule_type: entry.schedule_type,
                     aircraft_model: entry.aircraft_model,

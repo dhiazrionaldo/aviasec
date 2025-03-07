@@ -48,6 +48,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import useUser from "@/app/hook/useUser";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -201,6 +202,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       setIsDialogOpen4(false);
     }
   };
+
+  const handleRemoveRow = (index: number) => {
+    setTableData((prevData) => prevData.filter((_, i) => i !== index));
+  };
   
   return (
     <>
@@ -298,11 +303,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, index) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
+                  <TableCell>
+                    <Button variant="destructive" onClick={() => handleRemoveRow(index)}>
+                      <Trash2Icon size={15} />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -345,6 +355,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Rows</DialogTitle>
+            <DialogDescription className="font-thin text-xs">Fill with number of row you want to add</DialogDescription>
           </DialogHeader>
           <Input
             type="number"
