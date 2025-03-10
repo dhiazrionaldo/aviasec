@@ -137,11 +137,12 @@ export async function submitScheduleDeparture(datas) {
         .eq("flight_number", entry.flight_number)
         .eq("d_origin_iata", entry.d_ori_iata)
         .eq("a_des_iata", entry.d_des_iata1)
-        .single(); // Assuming flight_number + d_origin_iata + a_des_iata uniquely identify a flight
+    
 
     if (fetchScheduleError || !existingSchedule) {
         console.error("Error fetching flight schedule:", fetchScheduleError);
-        throw new Error("Flight schedule record not found");
+        //throw new Error("Flight schedule record not found");
+        continue;
     }
                         // Generate flight schedule with STD
                         const flightSchedule = filteredDates.map(date => ({
