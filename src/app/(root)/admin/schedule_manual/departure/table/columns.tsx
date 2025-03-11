@@ -14,6 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import useUser from '@/app/hook/useUser';
 
 export const maxDuration = 60;
 
@@ -128,7 +129,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         enableHiding: false,
     },     
     {
-        id: "airline_name",
+        accessorKey: "airline_name",
         header: "Airline Name",
         cell: ({ row }) => {
             const [airline_name, setAirlineName] = React.useState(row.original.airline_name);
@@ -156,7 +157,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },    
     {
-        id: "airline_code_iata",
+        accessorKey: "airline_code_iata",
         header: "Airline Name IATA",
         cell: ({ row }) => {
             const [airline_code_iata, setAirlineNameIATA] = React.useState(row.original.airline_code_iata);
@@ -185,7 +186,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },   
     {
-        id: "airline_code_icao",
+        accessorKey: "airline_code_icao",
         header: "Airline Name ICAO",
         cell: ({ row }) => {
             const [airline_code_icao, setAirlineNameICAO] = React.useState(row.original.airline_code_icao);
@@ -214,7 +215,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },   
     {
-        id: "flight_number",
+        accessorKey: "flight_number",
         header: "Flight Number",
         cell: ({ row }) => {
             const [flight_number, setFlightNumber] = React.useState(row.original.flight_number);
@@ -244,7 +245,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "start_effective_date",
+        accessorKey: "start_effective_date",
         header: "Start Effective Date",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
@@ -293,7 +294,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "end_effective_date",
+        accessorKey: "end_effective_date",
         header: "End Effective Date",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
@@ -342,7 +343,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "flight_time",
+        accessorKey: "flight_time",
         header: "Flight Time",
         cell: ({ row }) => {
             const [flight_time, setFlightTime] = React.useState(row.original.flight_time);
@@ -372,7 +373,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "aircraft_types",
+        accessorKey: "aircraft_types",
         header: "Aircraft Type",
         cell: ({ row }) => {
             const [aircraft_types, setAircraftType] = React.useState(row.original.aircraft_types);
@@ -399,36 +400,73 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
             
         },
     },
+    // {
+    //     id: "d_ori_iata",
+    //     header: "Origin",
+    //     cell: ({ row }) => {
+    //         const [d_ori_iata, setOriginIATA] = React.useState(row.original.d_ori_iata);
+    //         const {data} = useUser();
+
+    //         const originStation = data?.master_station.station_code;
+    //         setOriginIATA(originStation);
+    //         row.original.d_ori_iata = String(originStation); // Update row data
+    //         // Track the quantity change in the state
+    //         const handleOriginIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //             setOriginIATA(originStation);
+    //             row.original.d_ori_iata = String(originStation); // Update row data
+    //         };
+    //         if(!row.getIsSelected?.()){
+    //             return (
+    //                 <span className='uppercase'>{row.original.d_ori_iata}</span>
+    //             );
+    //         }else{
+    //             return (
+    //                 <Input
+    //                     value={d_ori_iata || originStation}
+    //                     onChange={handleOriginIATAChange}
+    //                     disabled={!row.getIsSelected()} // Allow editing only when selected
+    //                     className="w-fit border-grey-100 uppercase"
+    //                 />
+    //             );
+    //         }
+            
+    //     },
+    // },
     {
-        id: "d_ori_iata",
+        accessorKey: "d_ori_iata",
         header: "Origin",
         cell: ({ row }) => {
-            const [d_ori_iata, setOriginIATA] = React.useState(row.original.d_ori_iata);
-            
-            // Track the quantity change in the state
-            const handleOriginIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setOriginIATA(String(e.target.value));
-                row.original.d_ori_iata = String(e.target.value.toUpperCase()); // Update row data
-            };
-            if(!row.getIsSelected?.()){
-                return (
-                    <span className='uppercase'>{row.original.d_ori_iata}</span>
-                );
-            }else{
-                return (
-                    <Input
-                        value={d_ori_iata || ""}
-                        onChange={handleOriginIATAChange}
-                        disabled={!row.getIsSelected()} // Allow editing only when selected
-                        className="w-fit border-primary uppercase"
-                    />
-                );
+          const [d_ori_iata, setOriginIATA] = React.useState(row.original.d_ori_iata || ""); // Initial value
+          const { data } = useUser();
+          const originStation = data?.master_station.station_code;
+      
+          // Update state only when the component mounts or if originStation changes
+          React.useEffect(() => {
+            if (!row.original.d_ori_iata && originStation) {
+              setOriginIATA(originStation);
+              row.original.d_ori_iata = originStation; // Ensuring row data is updated
             }
-            
+          }, [originStation, row.original]); // Depend on `originStation` and `row.original`
+      
+          const handleOriginIATAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value;
+            setOriginIATA(newValue);
+            row.original.d_ori_iata = newValue; // Update row data
+          };
+      
+          return row.getIsSelected?.() ? (
+            <Input
+              value={d_ori_iata}
+              onChange={handleOriginIATAChange}
+              className="w-fit border-grey-100 uppercase"
+            />
+          ) : (
+            <span className="uppercase">{d_ori_iata}</span>
+          );
         },
-    },
+    },      
     {
-        id: "d_des_iata1",
+        accessorKey: "d_des_iata1",
         header: "Destination 1",
         cell: ({ row }) => {
             const [d_des_iata1, setDesIATA1] = React.useState(row.original.d_des_iata1);
@@ -456,7 +494,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "d_des_iata2",
+        accessorKey: "d_des_iata2",
         header: "Destination 2",
         cell: ({ row }) => {
             const [d_des_iata2, setDesIATA2] = React.useState(row.original.d_des_iata2);
@@ -484,7 +522,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "d_des_iata3",
+        accessorKey: "d_des_iata3",
         header: "Destination 3",
         cell: ({ row }) => {
             const [d_des_iata3, setDesIATA3] = React.useState(row.original.d_des_iata3);
@@ -512,7 +550,7 @@ export const columns: ColumnDef<DepartureManualSchedules>[] = [
         },
     },
     {
-        id: "d_des_iata4",
+        accessorKey: "d_des_iata4",
         header: "Destination 4",
         cell: ({ row }) => {
             const [d_des_iata4, setDesIATA4] = React.useState(row.original.d_des_iata4);

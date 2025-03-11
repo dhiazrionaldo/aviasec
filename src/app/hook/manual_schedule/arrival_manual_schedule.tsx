@@ -31,7 +31,7 @@ export async function submitScheduleArrival(datas) {
     if (!data.session?.user) return null;
     
     if (!user_id) throw new Error("User not authenticated.");
-    console.log(datas)
+    
     try {
         for (const entry of datas) {
             if(!entry.aircraft_model) throw new Error("The Aircraft Model can not be empty");

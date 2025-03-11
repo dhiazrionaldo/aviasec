@@ -156,7 +156,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         enableHiding: false,
     }, 
     {
-        id: "flight_status",
+        accessorKey: "flight_status",
         header: "Flight Status",
         cell:({row}) => {
             const status = new String(row.original.flight_status)
@@ -176,7 +176,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         }
     },
     {
-        id: "airline_name",
+        accessorKey: "airline_name",
         header: "Airline Name",
         cell: ({ row }) => {
             return (
@@ -207,7 +207,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },    
     {
-        id: "airline_iata",
+        accessorKey: "airline_iata",
         header: "Airline Code IATA",
         cell: ({ row }) => {
             // const [airline_iata, setAirlineNameIATA] = React.useState(row.original.airline_iata);
@@ -237,7 +237,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },   
     {
-        id: "airline_icao",
+        accessorKey: "airline_icao",
         header: "Airline Code ICAO",
         cell: ({ row }) => {
             return (
@@ -268,7 +268,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },   
     {
-        id: "flight_number_iata",
+        accessorKey: "flight_number_iata",
         header: "Flight Number",
         cell: ({ row }) => {
 
@@ -301,7 +301,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "aircraft_type_iata",
+        accessorKey: "aircraft_type_iata",
         header: "Aircraft Type",
         cell: ({ row }) => {
             const [aircraft_type_iata, setAircraftRegistration] = React.useState(row.original.aircraft_type_iata);
@@ -329,7 +329,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "aircraft_registration",
+        accessorKey: "aircraft_registration",
         header: "Aircraft Registration",
         cell: ({ row }) => {
             const [aircraft_registration, setAircraftRegistration] = React.useState(row.original.aircraft_registration);
@@ -357,7 +357,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "d_origin_iata",
+        accessorKey: "d_origin_iata",
         header: "Origin",
         cell: ({ row }) => {
             const [d_origin_iata, setOriginIATA] = React.useState(row.original.d_origin_iata);
@@ -385,7 +385,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "a_des_iata",
+        accessorKey: "a_des_iata",
         header: "Destination 1",
         cell: ({ row }) => {
             const [a_des_iata, setDesIATA1] = React.useState(row.original.a_des_iata);
@@ -540,7 +540,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "flight_date",
+        accessorKey: "flight_date",
         header: "Flight Date",
         cell: ({ row }) => {
             const flight_date = row.original.flight_date;
@@ -595,7 +595,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "d_flight_std",
+        accessorKey: "d_flight_std",
         header: "STD",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
@@ -645,7 +645,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },    
     {
-        id: "d_flight_etd",
+        accessorKey: "d_flight_etd",
         header: "ETD",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
@@ -695,7 +695,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
         },
     },
     {
-        id: "d_flight_atd",
+        accessorKey: "d_flight_atd",
         header: "ATD",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)

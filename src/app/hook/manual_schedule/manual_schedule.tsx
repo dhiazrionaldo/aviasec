@@ -132,18 +132,17 @@ export async function submitScheduleDeparture(datas) {
                         // Filter dates that match selected days
                         const filteredDates = allDates.filter(date => activeDays.includes(date.getDay()));
                         const { data: existingSchedule, error: fetchScheduleError } = await supabase
-        .from("departure_manual_flight_schedule")
-        .select("id")
-        .eq("flight_number", entry.flight_number)
-        .eq("d_origin_iata", entry.d_ori_iata)
-        .eq("a_des_iata", entry.d_des_iata1)
+                                .from("departure_manual_flight_schedule")
+                                .select("id")
+                                .eq("flight_number", entry.flight_number)
+                                .eq("d_origin_iata", entry.d_ori_iata)
+                                .eq("a_des_iata", entry.d_des_iata1)
     
 
-    if (fetchScheduleError || !existingSchedule) {
-        console.error("Error fetching flight schedule:", fetchScheduleError);
-        //throw new Error("Flight schedule record not found");
-        continue;
-    }
+                        if (fetchScheduleError || !existingSchedule) {
+                            console.error("Error fetching flight schedule:", fetchScheduleError);
+                            throw new Error("Flight schedule record not found");
+                        }
                         // Generate flight schedule with STD
                         const flightSchedule = filteredDates.map(date => ({
                             flight_date: format(date, "yyyy-MM-dd"),

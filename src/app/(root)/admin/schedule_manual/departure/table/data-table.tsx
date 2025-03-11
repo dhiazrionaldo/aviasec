@@ -120,29 +120,37 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     setTableData([...tableData, ...newRows]);
     setIsDialogOpen(false);
   };
-
+  
   const handleSubmit = async() => {
     setLoading(true)
     try {
-      const dataToSubmit = Array.isArray(tableData)
-        ? tableData.map((item) => ({
-            ...item, // Spread existing item properties
-            aircraft_model: aircraftModel,
-            schedule_type: scheduleType,
-            start_effective_date: item.start_effective_date,
-            end_effective_date: item.end_effective_date,
-          }))
-        : [
-            {
-              ...tableData, // Handle case where tableData is an object
-              aircraft_model: aircraftModel,
-              schedule_type: scheduleType,
-              start_effective_date: item.start_effective_date,
-              end_effective_date: item.end_effective_date,
-            },
-          ];
+      const selectedRowData = table.getSelectedRowModel().rows.map(row => ({
+        ...row.original,
+        aircraft_model: aircraftModel,
+        schedule_type: scheduleType,
+        // start_effective_date: row.start_effective_date,
+        // end_effective_date: row.end_effective_date,
+      }));
+
+      // const dataToSubmit = Array.isArray(tableData)
+      //   ? tableData.getSelectedRowModel().rows.map((item) => ({
+      //       ...item, // Spread existing item properties
+      //       aircraft_model: aircraftModel,
+      //       schedule_type: scheduleType,
+      //       start_effective_date: item.start_effective_date,
+      //       end_effective_date: item.end_effective_date,
+      //     }))
+      //   : [
+      //       {
+      //         ...tableData, // Handle case where tableData is an object
+      //         aircraft_model: aircraftModel,
+      //         schedule_type: scheduleType,
+      //         start_effective_date: item.start_effective_date,
+      //         end_effective_date: item.end_effective_date,
+      //       },
+      //     ];
       // Send the data to your API or backend function
-      await submitScheduleDeparture(dataToSubmit);
+      await submitScheduleDeparture(selectedRowData);
       queryClient.invalidateQueries({queryKey: ["departure_manual_schedule"]}); 
       queryClient.invalidateQueries({queryKey: ["departure_manual_flight_schedule"]}); 
       
@@ -165,25 +173,32 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   const handleDelete = async() => {
     setLoading(true)
     try {
-      const dataToSubmit = Array.isArray(tableData)
-        ? tableData.map((item) => ({
-            ...item, // Spread existing item properties
-            aircraft_model: aircraftModel,
-            schedule_type: scheduleType,
-            start_effective_date: item.start_effective_date ? new Date(item.start_effective_date).toDateString().split("T")[0] : null,
-            end_effective_date: item.end_effective_date ? new Date(item.end_effective_date).toDateString().split("T")[0] : null,
-          }))
-        : [
-            {
-              ...tableData, // Handle case where tableData is an object
-              aircraft_model: aircraftModel,
-              schedule_type: scheduleType,
-              start_effective_date: item.start_effective_date ? new Date(item.start_effective_date).toString().split("T")[0] : null,
-              end_effective_date: item.end_effective_date ? new Date(item.end_effective_date).toString().split("T")[0] : null,
-            },
-          ];
+      const selectedRowData = table.getSelectedRowModel().rows.map(row => ({
+        ...row.original,
+        aircraft_model: aircraftModel,
+        schedule_type: scheduleType,
+        // start_effective_date: row.start_effective_date,
+        // end_effective_date: row.end_effective_date,
+      }));
+      // const dataToSubmit = Array.isArray(tableData)
+      //   ? tableData.map((item) => ({
+      //       ...item, // Spread existing item properties
+      //       aircraft_model: aircraftModel,
+      //       schedule_type: scheduleType,
+      //       start_effective_date: item.start_effective_date ? new Date(item.start_effective_date).toDateString().split("T")[0] : null,
+      //       end_effective_date: item.end_effective_date ? new Date(item.end_effective_date).toDateString().split("T")[0] : null,
+      //     }))
+      //   : [
+      //       {
+      //         ...tableData, // Handle case where tableData is an object
+      //         aircraft_model: aircraftModel,
+      //         schedule_type: scheduleType,
+      //         start_effective_date: item.start_effective_date ? new Date(item.start_effective_date).toString().split("T")[0] : null,
+      //         end_effective_date: item.end_effective_date ? new Date(item.end_effective_date).toString().split("T")[0] : null,
+      //       },
+      //     ];
       // Send the data to your API or backend function
-      await deleteDepartureManualSchedule(dataToSubmit);
+      await deleteDepartureManualSchedule(selectedRowData);
       queryClient.invalidateQueries({queryKey: ["departure_manual_schedule"]}); 
       queryClient.invalidateQueries({queryKey: ["departure_manual_flight_schedule"]}); 
       

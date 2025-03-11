@@ -12,6 +12,7 @@ import {
   DoorOpenIcon,
   Group,
   Handshake,
+  HandshakeIcon,
   LaptopMinimalCheckIcon,
   LineChartIcon,
   ListCheckIcon,
@@ -122,6 +123,11 @@ const adminSidebarItems: SidebarItems = {
   //             Role Master
   //         </SidebarButton>
   //       </Link>
+//         <Link href='/admin/setting/master_airline'>
+//           <SidebarButton size='sm' icon={HandshakeIcon} className='w-full'>
+//             Airline Settings
+//           </SidebarButton>
+//         </Link>
   //       <Link href='/admin/setting/master_gate'>
   //         <SidebarButton size='sm' icon={DoorOpenIcon} className='w-full'>
   //             Gate Master
@@ -221,6 +227,11 @@ const superAdminSidebarItems: SidebarItems = {
         <Link href='/admin/setting/master_role'>
           <SidebarButton size='sm' icon={LaptopMinimalCheckIcon} className='w-full'>
               Role Master
+          </SidebarButton>
+        </Link>
+        <Link href='/admin/setting/master_airline'>
+          <SidebarButton size='sm' icon={HandshakeIcon} className='w-full'>
+            Airline Settings
           </SidebarButton>
         </Link>
         <Link href='/admin/setting/master_gate'>
