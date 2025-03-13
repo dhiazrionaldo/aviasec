@@ -595,17 +595,17 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
         },
     },
     {
-        accessorKey: "d_flight_std",
-        header: "STD",
+        accessorKey: "a_des_sta",
+        header: "STA",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
-            const initialDate = row.original.d_flight_std ? new Date(row.original.d_flight_std) : null;
-            const [d_flight_std, setEndDate] = React.useState<Date | null>(initialDate);
+            const initialDate = row.original.a_des_sta ? new Date(row.original.a_des_sta) : null;
+            const [a_des_sta, setEndDate] = React.useState<Date | null>(initialDate);
     
             const handleDateChange = (date: Date | undefined) => {
                 if (date) {
                     setEndDate(date);
-                    row.original.d_flight_std = date; // 🔹 Persist date in row data
+                    row.original.a_des_sta = date; // 🔹 Persist date in row data
                 }
             };
     
@@ -613,7 +613,7 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                 return (
                     <span>
                         {/* {d_flight_std ? format(d_flight_std, "PPpp") : "No Date"} */}
-                        {d_flight_std ? format(d_flight_std, "hh:mm:ss") : "No Date"}
+                        {a_des_sta ? format(a_des_sta, "hh:mm:ss") : "No Date"}
                     </span>
                 );
             } else {
@@ -624,17 +624,17 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                                 variant={"outline"}
                                 className={cn(
                                     "w-fit justify-start text-left font-normal",
-                                    !d_flight_std && "text-muted-foreground"
+                                    !a_des_sta && "text-muted-foreground"
                                 )}
                             >
                                 <CalendarIcon />
-                                {d_flight_std ? format(d_flight_std, "Pp") : <span>Pick a date</span>}
+                                {a_des_sta ? format(a_des_sta, "Pp") : <span>Pick a date</span>}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                                 mode="single"
-                                selected={d_flight_std}
+                                selected={a_des_sta}
                                 onSelect={handleDateChange} // 🔹 Persist date selection
                                 initialFocus
                             />
@@ -645,17 +645,17 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
         },
     },    
     {
-        accessorKey: "d_flight_etd",
-        header: "ETD",
+        accessorKey: "a_des_eta",
+        header: "ETA",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
-            const initialDate = row.original.d_flight_etd ? new Date(row.original.d_flight_etd) : null;
-            const [d_flight_etd, setEndDate] = React.useState<Date | null>(initialDate);
+            const initialDate = row.original.a_des_eta ? new Date(row.original.a_des_eta) : null;
+            const [a_des_eta, setEndDate] = React.useState<Date | null>(initialDate);
     
             const handleDateChange = (date: Date | undefined) => {
                 if (date) {
                     setEndDate(date);
-                    row.original.d_flight_etd = date; // 🔹 Persist date in row data
+                    row.original.a_des_eta = date; // 🔹 Persist date in row data
                 }
             };
     
@@ -663,7 +663,7 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                 return (
                     <span>
                         {/* {d_flight_etd ? format(d_flight_etd, "PPpp") : "No Date"} */}
-                        {d_flight_etd ? format(d_flight_etd, "PPpp") : "No Date"}
+                        {a_des_eta ? format(a_des_eta, "PPpp") : "No Date"}
                     </span>
                 );
             } else {
@@ -674,17 +674,17 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                                 variant={"outline"}
                                 className={cn(
                                     "w-fit justify-start text-left font-normal",
-                                    !d_flight_etd && "text-muted-foreground"
+                                    !a_des_eta && "text-muted-foreground"
                                 )}
                             >
                                 <CalendarIcon />
-                                {d_flight_etd ? format(d_flight_etd, "Pp") : <span>Pick a date</span>}
+                                {a_des_eta ? format(a_des_eta, "Pp") : <span>Pick a date</span>}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                                 mode="single"
-                                selected={d_flight_etd}
+                                selected={a_des_eta}
                                 onSelect={handleDateChange} // 🔹 Persist date selection
                                 initialFocus
                             />
@@ -695,17 +695,17 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
         },
     },
     {
-        accessorKey: "d_flight_atd",
-        header: "ATD",
+        accessorKey: "a_des_ata",
+        header: "ATA",
         cell: ({ row }) => {
             // Convert row.original.start_date to a Date object (handle null & invalid cases)
-            const initialDate = row.original.d_flight_atd ? new Date(row.original.d_flight_atd) : null;
-            const [d_flight_atd, setEndDate] = React.useState<Date | null>(initialDate);
+            const initialDate = row.original.a_des_ata ? new Date(row.original.a_des_ata) : null;
+            const [a_des_ata, setEndDate] = React.useState<Date | null>(initialDate);
     
             const handleDateChange = (date: Date | undefined) => {
                 if (date) {
                     setEndDate(date);
-                    row.original.d_flight_atd = date; // 🔹 Persist date in row data
+                    row.original.a_des_ata = date; // 🔹 Persist date in row data
                 }
             };
     
@@ -713,7 +713,7 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                 return (
                     <span>
                         {/* {d_flight_atd ? format(d_flight_atd, "PPpp") : "No Date"} */}
-                        {d_flight_atd ? format(d_flight_atd, "PPpp") : "No Date"}
+                        {a_des_ata ? format(a_des_ata, "PPpp") : "No Date"}
                     </span>
                 );
             } else {
@@ -724,17 +724,17 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                                 variant={"outline"}
                                 className={cn(
                                     "w-fit justify-start text-left font-normal",
-                                    !d_flight_atd && "text-muted-foreground"
+                                    !a_des_ata && "text-muted-foreground"
                                 )}
                             >
                                 <CalendarIcon />
-                                {d_flight_atd ? format(d_flight_atd, "Pp") : <span>Pick a date</span>}
+                                {a_des_ata ? format(a_des_ata, "Pp") : <span>Pick a date</span>}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                                 mode="single"
-                                selected={d_flight_atd}
+                                selected={a_des_ata}
                                 onSelect={handleDateChange} // 🔹 Persist date selection
                                 initialFocus
                             />

@@ -50,7 +50,6 @@ export async function submitScheduleArrival(datas) {
                     .from("arrival_manual_schedule")
                     .select("id")
                     .eq("id", entry.id)
-                    .single();
     
                 if (fetchError) {
                     console.error("Error fetching existing data:", fetchError);
@@ -58,8 +57,9 @@ export async function submitScheduleArrival(datas) {
                 }
     
                 if (existingData) {
-                    // Perform update
-                    const { error: updateError, data: updated } = await supabase
+                    for(const updateData of existingData){
+                        // Perform update
+                        const { error: updateError, data: updated } = await supabase
                         .from("arrival_manual_schedule")
                         .update({
                             aircraft_model: entry.aircraft_model,
@@ -88,9 +88,9 @@ export async function submitScheduleArrival(datas) {
                             modified_by: userDet.display_name,
                             modified_at: today,
                         })
-                        .eq("id", entry.id)
+                        .eq("id", updateData.id)
                         .select();
-    
+
                     if (updateError) {
                         console.error("Error updating record:", updateError);
                         throw new Error(updateError.message);
@@ -131,7 +131,18 @@ export async function submitScheduleArrival(datas) {
                     
                         // Filter dates that match selected days
                         const filteredDates = allDates.filter(date => activeDays.includes(date.getDay()));
-                    
+                        const { data: existingSchedule, error: fetchScheduleError } = await supabase
+                                .from("arrival_manual_flight_schedule")
+                                .select("id")
+                                .eq("flight_number", entry.flight_number)
+                                .eq("d_origin_iata", entry.d_ori_iata)
+                                .eq("a_des_iata", entry.d_des_iata1)
+    
+
+                        if (fetchScheduleError || !existingSchedule) {
+                            console.error("Error fetching flight schedule:", fetchScheduleError);
+                            throw new Error("Flight schedule record not found");
+                        }
                         // Generate flight schedule with STD
                         const flightSchedule = filteredDates.map(date => ({
                             flight_date: format(date, "yyyy-MM-dd"),
@@ -139,7 +150,8 @@ export async function submitScheduleArrival(datas) {
                             d_origin_iata: entry.a_ori_iata1,
                             a_des_iata: entry.d_des_iata1,
                             d_origin_icao: entry.d_origin_icao,
-                            d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                            a_des_sta: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                            a_des_eta: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
                             airline_name: entry.airline_name,
                             airline_iata: entry.airline_code_iata,
                             airline_icao: entry.airline_code_icao,
@@ -151,16 +163,22 @@ export async function submitScheduleArrival(datas) {
                             modified_at: today,
                         }));
                         
-                        const { error: updateScheduleError } = await supabase
-                        .from("arrival_manual_flight_schedule")
-                        .update(flightSchedule)
-
-                        if (updateScheduleError) {
-                            console.error("Error updating record:", updateScheduleError);
-                            throw new Error(updateScheduleError.message);
+                        for(const dailySchedule of existingSchedule){
+                            const { error: updateScheduleError } = await supabase
+                                .from("arrival_manual_flight_schedule")
+                                .update(flightSchedule)
+                                .eq("id", dailySchedule.id)
+        
+                                if (updateScheduleError) {
+                                    console.error("Error updating record:", updateScheduleError);
+                                    throw new Error(updateScheduleError.message);
+                                }
+                                return flightSchedule;
                         }
-                        return flightSchedule;
+                       
                     }
+                    }
+                    
                 }
             } else {
                 // **INSERT** new record
@@ -243,7 +261,8 @@ export async function submitScheduleArrival(datas) {
                     d_origin_iata: entry.a_ori_iata1,
                     a_des_iata: entry.d_des_iata1,
                     d_origin_icao: entry.d_origin_icao,
-                    d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                    a_des_sta: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                    a_des_eta: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
                     airline_name: entry.airline_name,
                     airline_iata: entry.airline_code_iata,
                     airline_icao: entry.airline_code_icao,

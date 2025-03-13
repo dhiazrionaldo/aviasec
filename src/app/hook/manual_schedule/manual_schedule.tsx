@@ -31,7 +31,7 @@ export async function submitScheduleDeparture(datas) {
     if (!data.session?.user) return null;
     
     if (!user_id) throw new Error("User not authenticated.");
-    console.log(datas)
+    
     try {
         for (const entry of datas) {
             if(!entry.aircraft_model) throw new Error("The Aircraft Model can not be empty");
@@ -50,130 +50,138 @@ export async function submitScheduleDeparture(datas) {
                     .from("departure_manual_schedule")
                     .select("id")
                     .eq("id", entry.id)
-                    .single();
     
                 if (fetchError) {
                     console.error("Error fetching existing data:", fetchError);
                     continue; // Skip to the next entry if error occurs
                 }
-    
+                
+
                 if (existingData) {
-                    // Perform update
-                    const { error: updateError, data: updated } = await supabase
-                        .from("departure_manual_schedule")
-                        .update({
-                            aircraft_model: entry.aircraft_model,
-                            schedule_type: entry.schedule_type,
-                            aircraft_types: entry.aircraft_types,
-                            airline_code_iata: entry.airline_code_iata,
-                            airline_code_icao: entry.airline_code_icao,
-                            airline_name: entry.airline_name,
-                            d_des_iata1: entry.d_des_iata1,
-                            d_des_iata2: entry.d_des_iata2,
-                            d_des_iata3: entry.d_des_iata3,
-                            d_des_iata4: entry.d_des_iata4,
-                            d_ori_iata: entry.d_ori_iata,
-                            flight_number: entry.flight_number,
-                            monday: entry.monday,
-                            tuesday: entry.tuesday,
-                            wednesday: entry.wednesday,
-                            thursday: entry.thursday,
-                            friday: entry.friday,
-                            saturday: entry.saturday,
-                            sunday: entry.sunday,
-                            remark: entry.remark,
-                            start_effective_date: entry.start_effective_date,
-                            end_effective_date: entry.end_effective_date,
-                            flight_time: entry.flight_time,
-                            modified_by: userDet.display_name,
-                            modified_at: today,
-                        })
-                        .eq("id", entry.id)
-                        .select();
-    
-                    if (updateError) {
-                        console.error("Error updating record:", updateError);
-                        throw new Error(updateError.message);
-                    }
-                    
-                    //UPDATE SCHEDULE TABLE
-                    if(updated){
-                        const selectedDays ={
-                            Monday: entry.monday,
-                            Tuesday: entry.tuesday,
-                            Wednesday: entry.wednesday,
-                            Thursday: entry.thursday,
-                            Friday: entry.friday,
-                            Saturday: entry.saturday,
-                            Sunday: entry.sunday,
-                        }
-        
-                        const dayIndexes = {
-                            Sunday: 0,
-                            Monday: 1,
-                            Tuesday: 2,
-                            Wednesday: 3,
-                            Thursday: 4,
-                            Friday: 5,
-                            Saturday: 6,
-                        };
-                    
-                        // Get the selected days as an array of indexes
-                        const activeDays = Object.entries(selectedDays)
-                        .filter(([_, isSelected]) => isSelected)
-                        .map(([day]) => dayIndexes[day]);
-                    
-                        // Generate all dates within the range
-                        const allDates = eachDayOfInterval({
-                        start: new Date(entry.start_effective_date,),
-                        end: new Date(entry.end_effective_date,),
-                        });
-                    
-                        // Filter dates that match selected days
-                        const filteredDates = allDates.filter(date => activeDays.includes(date.getDay()));
-                        const { data: existingSchedule, error: fetchScheduleError } = await supabase
-                                .from("departure_manual_flight_schedule")
-                                .select("id")
-                                .eq("flight_number", entry.flight_number)
-                                .eq("d_origin_iata", entry.d_ori_iata)
-                                .eq("a_des_iata", entry.d_des_iata1)
-    
+                    for(const updateData of existingData) {
+                        // Perform update
+                        const { error: updateError, data: updated } = await supabase
+                            .from("departure_manual_schedule")
+                            .update({
+                                aircraft_model: entry.aircraft_model,
+                                schedule_type: entry.schedule_type,
+                                aircraft_types: entry.aircraft_types,
+                                airline_code_iata: entry.airline_code_iata,
+                                airline_code_icao: entry.airline_code_icao,
+                                airline_name: entry.airline_name,
+                                d_des_iata1: entry.d_des_iata1,
+                                d_des_iata2: entry.d_des_iata2,
+                                d_des_iata3: entry.d_des_iata3,
+                                d_des_iata4: entry.d_des_iata4,
+                                d_ori_iata: entry.d_ori_iata,
+                                flight_number: entry.flight_number,
+                                monday: entry.monday,
+                                tuesday: entry.tuesday,
+                                wednesday: entry.wednesday,
+                                thursday: entry.thursday,
+                                friday: entry.friday,
+                                saturday: entry.saturday,
+                                sunday: entry.sunday,
+                                remark: entry.remark,
+                                start_effective_date: entry.start_effective_date,
+                                end_effective_date: entry.end_effective_date,
+                                flight_time: entry.flight_time,
+                                modified_by: userDet.display_name,
+                                modified_at: today,
+                            })
+                            .eq("id", updateData.id)
+                            .select();
 
-                        if (fetchScheduleError || !existingSchedule) {
-                            console.error("Error fetching flight schedule:", fetchScheduleError);
-                            throw new Error("Flight schedule record not found");
+                        if (updateError) {
+                            console.error("Error updating record:", updateError);
+                            throw new Error(updateError.message);
                         }
-                        // Generate flight schedule with STD
-                        const flightSchedule = filteredDates.map(date => ({
-                            flight_date: format(date, "yyyy-MM-dd"),
-                            flight_status: "scheduled",
-                            d_origin_iata: entry.d_ori_iata,
-                            a_des_iata: entry.d_des_iata1,
-                            d_origin_icao: entry.d_origin_icao,
-                            d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
-                            airline_name: entry.airline_name,
-                            airline_iata: entry.airline_code_iata,
-                            airline_icao: entry.airline_code_icao,
-                            flight_number: entry.flight_number,
-                            flight_number_iata: entry.airline_code_iata+entry.flight_number,
-                            aircraft_type_iata: entry.aircraft_types,
-                            schedule_type: entry.schedule_type,
-                            aircraft_model: entry.aircraft_model,
-                            modified_by: userDet.display_name,
-                            modified_at: today,
-                        }));
+                        //UPDATE SCHEDULE TABLE
+                        if(updated){
+                            const selectedDays ={
+                                Monday: entry.monday,
+                                Tuesday: entry.tuesday,
+                                Wednesday: entry.wednesday,
+                                Thursday: entry.thursday,
+                                Friday: entry.friday,
+                                Saturday: entry.saturday,
+                                Sunday: entry.sunday,
+                            }
+            
+                            const dayIndexes = {
+                                Sunday: 0,
+                                Monday: 1,
+                                Tuesday: 2,
+                                Wednesday: 3,
+                                Thursday: 4,
+                                Friday: 5,
+                                Saturday: 6,
+                            };
                         
-                        const { error: updateScheduleError } = await supabase
-                        .from("departure_manual_flight_schedule")
-                        .update(flightSchedule)
-                        .eq("id", existingSchedule.id)
+                            // Get the selected days as an array of indexes
+                            const activeDays = Object.entries(selectedDays)
+                            .filter(([_, isSelected]) => isSelected)
+                            .map(([day]) => dayIndexes[day]);
+                        
+                            // Generate all dates within the range
+                            const allDates = eachDayOfInterval({
+                            start: new Date(entry.start_effective_date,),
+                            end: new Date(entry.end_effective_date,),
+                            });
+                        
+                            // Filter dates that match selected days
+                            const filteredDates = allDates.filter(date => activeDays.includes(date.getDay()));
+                            const { data: existingSchedule, error: fetchScheduleError } = await supabase
+                                    .from("departure_manual_flight_schedule")
+                                    .select("id")
+                                    .eq("flight_number", entry.flight_number)
+                                    .eq("d_origin_iata", entry.d_ori_iata)
+                                    .eq("a_des_iata", entry.d_des_iata1)
+        
 
-                        if (updateScheduleError) {
-                            console.error("Error updating record:", updateScheduleError);
-                            throw new Error(updateScheduleError.message);
+                            if (fetchScheduleError || !existingSchedule) {
+                                console.error("Error fetching flight schedule:", fetchScheduleError);
+                                throw new Error("Flight schedule record not found");
+                            }
+                            // Generate flight schedule with STD
+                            const flightSchedule = filteredDates.map(date => ({
+                                flight_date: format(date, "yyyy-MM-dd"),
+                                flight_status: "scheduled",
+                                d_origin_iata: entry.d_ori_iata,
+                                a_des_iata: entry.d_des_iata1,
+                                d_origin_icao: entry.d_origin_icao,
+                                d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                                d_flight_etd: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
+                                airline_name: entry.airline_name,
+                                airline_iata: entry.airline_code_iata,
+                                airline_icao: entry.airline_code_icao,
+                                flight_number: entry.flight_number,
+                                flight_number_iata: entry.airline_code_iata+entry.flight_number,
+                                aircraft_type_iata: entry.aircraft_types,
+                                schedule_type: entry.schedule_type,
+                                aircraft_model: entry.aircraft_model,
+                                modified_by: userDet.display_name,
+                                modified_at: today,
+                            }));
+                            
+                            for(const dailySchedule of existingSchedule){
+                                const { error: updateScheduleError } = await supabase
+                                    .from("departure_manual_flight_schedule")
+                                    .update(flightSchedule)
+                                    .eq("id", dailySchedule.id)
+
+                                if (updateScheduleError) {
+                                    console.error("Error updating daily schedule:", updateScheduleError);
+                                    throw new Error(updateScheduleError.message);
+                                }
+                                return flightSchedule;
+                            }
+                            
                         }
-                        return flightSchedule;
                     }
+                    
+                    
+                    
                 }
             } else {
                 // **INSERT** new record
@@ -206,14 +214,11 @@ export async function submitScheduleDeparture(datas) {
                         created_by: userDet.display_name,
                         created_at: today,
                     })
-                    .select();
     
                 if (insertError) {
                     console.error("Error inserting record:", insertError);
                     throw new Error(insertError.message);
                 }
-
-                console.log(inserted);
                 //INSERT TO SCHEDULE TABLE
                 if(inserted){
                     const selectedDays ={

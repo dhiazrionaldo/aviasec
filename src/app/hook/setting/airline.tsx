@@ -18,14 +18,23 @@ export default function airlineMaster() {
         queryKey: ["airline_master"],
         queryFn: async () => {
             const supabase = createClient();
-            const { data } = await supabase.auth.getSession();
+            const { data, error } = await supabase.auth.getSession();
 
             if (data.session?.user) {
                 const { data: airline } = await supabase
                     .from("master_airline")
                     .select("*");
-                return airline;
+                if(error){
+                    console.error("Error updating daily schedule:", error);
+                    throw new Error(error.message);
+                }else {
+                    return airline;
+                }
+                
+                
             }
+
+            
             return [];
         }
     });
