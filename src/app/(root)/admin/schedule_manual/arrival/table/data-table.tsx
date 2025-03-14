@@ -381,7 +381,11 @@ export function DataTable<TData, TValue>({ columns, data, airlinesData }: DataTa
 
       {/* dialog section */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent
+          onInteractOutside={(e) => {
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Add Rows</DialogTitle>
             <DialogDescription className="font-thin text-xs">Fill with number of row you want to add</DialogDescription>
@@ -431,22 +435,22 @@ export function DataTable<TData, TValue>({ columns, data, airlinesData }: DataTa
             <div className="col-span-2 space-y-2">
               {/* ✅ INPUT FIELDS */}
               <Label className="font-semibold">Flight Number</Label>
-              <Input onChange={(e) => handleInputChange("flight_number", e.target.value)} />
+              <Input className="uppercase" onChange={(e) => handleInputChange("flight_number", e.target.value.toUpperCase())} />
             </div>
             
             <div className="col-span-2 space-y-2">
               <Label className="font-semibold">Aircraft Type</Label>
-              <Input onChange={(e) => handleInputChange("aircraft_types", e.target.value)} />
+              <Input className="uppercase" onChange={(e) => handleInputChange("aircraft_types", e.target.value.toUpperCase())} />
             </div>
           
             <div className="col-span-2 space-y-2">
               <Label className="font-semibold">Flight Time</Label>
               <Input type="time" onChange={(e) => handleInputChange("flight_time", e.target.value)} />
             </div>
-            <div className="col-span-2 space-y-2">        
+            {/* <div className="col-span-2 space-y-2">        
               <Label className="font-semibold">Destination IATA</Label>
               <Input className='uppercase' onChange={(e) => handleInputChange("a_des_iata", e.target.value.toUpperCase())} />
-            </div>
+            </div> */}
             <div className="col-span-2 space-y-2">
               <Label className="font-semibold">Origin IATA 1</Label>
               <Input className='uppercase' onChange={(e) => handleInputChange("a_ori_iata1", e.target.value.toUpperCase())} />
