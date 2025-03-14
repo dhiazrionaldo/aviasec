@@ -115,7 +115,6 @@ export function DataTable<TData, TValue>({ columns, data, airlinesData }: DataTa
 
   // ✅ Handle Input Changes & Console Log
   const handleInputChange = (key, value) => {
-    console.log(`${key}:`, value);
     setNewRowData((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -133,34 +132,6 @@ export function DataTable<TData, TValue>({ columns, data, airlinesData }: DataTa
     setTableData([...tableData, ...newRows]);
     setIsDialogOpen(false);
   };
-  // const handleAddRows = () => {
-  //   const newRows = Array.from({ length: rowsToAdd }, () => ({
-  //     flight_date: null,
-  //     flight_time: null,
-  //     d_origin_name: null,
-  //     d_ori_iata: null,
-  //     a_des_name: null,
-  //     a_des_iata: null,
-  //     d_flight_std: null,
-  //     airline_name: null,
-  //     airline_iata: null,
-  //     airline_icao: null,
-  //     flight_number: null,
-  //     d_des_iata1: null,
-  //     d_des_iata2: null,
-  //     d_des_iata3: null,
-  //     d_des_iata4: null,
-  //     monday: null,
-  //     tuesday: null,
-  //     wednesday: null,
-  //     thursday: null,
-  //     friday: null,
-  //     saturday: null,
-  //     sunday: null
-  //   })) as TData[];
-  //   setTableData([...tableData, ...newRows]);
-  //   setIsDialogOpen(false);
-  // };
   
   const handleSubmit = async() => {
     setLoading(true)
@@ -173,23 +144,6 @@ export function DataTable<TData, TValue>({ columns, data, airlinesData }: DataTa
         // end_effective_date: row.end_effective_date,
       }));
       
-      // const dataToSubmit = Array.isArray(tableData)
-      //   ? tableData.getSelectedRowModel().rows.map((item) => ({
-      //       ...item, // Spread existing item properties
-      //       aircraft_model: aircraftModel,
-      //       schedule_type: scheduleType,
-      //       start_effective_date: item.start_effective_date,
-      //       end_effective_date: item.end_effective_date,
-      //     }))
-      //   : [
-      //       {
-      //         ...tableData, // Handle case where tableData is an object
-      //         aircraft_model: aircraftModel,
-      //         schedule_type: scheduleType,
-      //         start_effective_date: item.start_effective_date,
-      //         end_effective_date: item.end_effective_date,
-      //       },
-      //     ];
       // Send the data to your API or backend function
       await submitScheduleDeparture(selectedRowData);
       queryClient.invalidateQueries({queryKey: ["departure_manual_schedule"]}); 

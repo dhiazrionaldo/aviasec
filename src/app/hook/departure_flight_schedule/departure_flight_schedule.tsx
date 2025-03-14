@@ -19,7 +19,7 @@ export default function getDepartureManualFlightSchedule(dateRange: {from: Date,
                     .from("departure_manual_flight_schedule")
                     .select(`*`)
                     .gte('flight_date', startDate)
-                    .lt('flight_date', endDate);
+                    .lte('flight_date', endDate);
                 return departure_flight_schedule;
             }
             if (fetchError) {

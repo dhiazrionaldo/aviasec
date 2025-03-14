@@ -663,7 +663,7 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                 return (
                     <span>
                         {/* {d_flight_etd ? format(d_flight_etd, "PPpp") : "No Date"} */}
-                        {a_des_eta ? format(a_des_eta, "PPpp") : "No Date"}
+                        {a_des_eta ?  format(a_des_eta, "hh:mm:ss") : "No Date"}
                     </span>
                 );
             } else {
@@ -713,7 +713,7 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
                 return (
                     <span>
                         {/* {d_flight_atd ? format(d_flight_atd, "PPpp") : "No Date"} */}
-                        {a_des_ata ? format(a_des_ata, "PPpp") : "No Date"}
+                        {a_des_ata ? format(a_des_ata, "hh:mm:ss") : "No Date"}
                     </span>
                 );
             } else {
