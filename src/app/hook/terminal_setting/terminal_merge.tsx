@@ -65,6 +65,34 @@ export function getParkingStand() {
     });
 }
 
+export function terminalPairingbyId(id: string){
+    return useQuery({
+        queryKey: ["terminal_pairing_master_by_id"],
+        queryFn: async () => {
+            const supabase = createClient();
+            const { data } = await supabase.auth.getSession();
+
+            if(data.session?.user){
+                const {data: pairing_by_id, error: pairing_by_idError} = await supabase
+                    .from("master_pairing_gate")
+                    .select(`
+                        *,
+                        master_station(id, station_name, station_code),
+                        master_terminal(id, terminal),
+                        master_gate(id, gate),
+                        master_parking_stand(id, parking_stand)
+                    `)
+                    .eq("terminal_id", id);
+                    
+                    if(pairing_by_idError){
+                        throw new Error("System Error! unable to get terminal pairing data!")
+                    }
+                    return pairing_by_id;
+            }
+        }
+    })
+}
+
 export default function terminalPairingMaster() {
     return useQuery({
         queryKey: ["terminal_pairing_master"],

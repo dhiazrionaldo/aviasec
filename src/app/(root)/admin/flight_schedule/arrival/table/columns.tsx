@@ -413,24 +413,24 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
         },
     },
     {
-        accessorKey: "d_origin_terminal",
+        accessorKey: "a_des_terminal",
         header: "Terminal",
         cell: ({ row }) => {
             const { data: terminals } = getTerminal(); // Fetch companies
-            const [selectedTerminal, setSelectedTerminal] = useState(row.original.d_origin_terminal || null);
+            const [selectedTerminal, setSelectedTerminal] = useState(row.original.a_des_terminal || null);
             if (!row) return null; 
             if(!row.getIsSelected?.()){
                 return (
-                    <span>{row.original.d_origin_terminal}</span>
+                    <span>{row.original.a_des_terminal}</span>
                 );
             }else {
                 return (
                     <Select
-                        value={selectedTerminal ? (Array.isArray(terminals) ? terminals.find(terminal => terminal?.id === row.original.d_origin_terminal)?.terminal || undefined : undefined) : undefined}
+                        value={selectedTerminal ? (Array.isArray(terminals) ? terminals.find(terminal => terminal?.id === row.original.a_des_terminal)?.terminal || undefined : undefined) : undefined}
                         onValueChange={(value) => {
                             const selected = Array.isArray(terminals) ? terminals.find((terminal) => terminal?.terminal === value) : null;
                             if (selected) {
-                                row.original.d_origin_terminal = selected.id;
+                                row.original.a_des_terminal = selected.id;
                                 setSelectedTerminal(selected.id);
                             }
                         }}
@@ -455,11 +455,11 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
         },
     },
     {
-        accessorKey: "d_origin_gate",
+        accessorKey: "a_des_gate",
         header: "Boarding Gate",
         cell: ({ row }) => {
             const { data: gates } = getGate(); // Fetch companies
-            const [selectedGate, setSelectedGate] = useState(row.original.d_origin_gate || null);
+            const [selectedGate, setSelectedGate] = useState(row.original.a_des_gate || null);
             if (!row) return null; 
             if(!row.getIsSelected?.()){
                 return (
@@ -468,11 +468,11 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
             }else {
                 return (
                     <Select
-                        value={selectedGate ? (Array.isArray(gates) ? gates.find(gate => gate?.id === row.original.d_origin_gate)?.gate || undefined : undefined) : undefined}
+                        value={selectedGate ? (Array.isArray(gates) ? gates.find(gate => gate?.id === row.original.a_des_gate)?.gate || undefined : undefined) : undefined}
                         onValueChange={(value) => {
                             const selected = Array.isArray(gates) ? gates.find((gate) => gate?.gate === value) : null;
                             if (selected) {
-                                row.original.d_origin_gate = selected.id;
+                                row.original.a_des_gate = selected.id;
                                 setSelectedGate(selected.id);
                             }
                         }}
@@ -498,24 +498,24 @@ export const columns: ColumnDef<ArrivalManualFlightSchedules>[] = [
         },
     },
     {
-        accessorKey: "d_parking_stand",
+        accessorKey: "a_parking_stand",
         header: "Parking Stand",
         cell: ({ row }) => {
             const { data: parking_stands } = getParkingStand(); // Fetch companies
-            const [selectedParkingStand, setSelectedParkingStand] = useState(row.original.d_parking_stand || null);
+            const [selectedParkingStand, setSelectedParkingStand] = useState(row.original.a_parking_stand || null);
             if (!row) return null;
             if(!row.getIsSelected?.()){
                 return (
-                    <span>{row.original.d_origin_terminal}</span>
+                    <span>{row.original.a_parking_stand}</span>
                 );
             }else { 
                 return (
                     <Select
-                        value={selectedParkingStand ? (Array.isArray(parking_stands) ? parking_stands.find(parking => parking?.id === row.original.d_parking_stand)?.parking_stand || undefined : undefined) : undefined}
+                        value={selectedParkingStand ? (Array.isArray(parking_stands) ? parking_stands.find(parking => parking?.id === row.original.a_parking_stand)?.parking_stand || undefined : undefined) : undefined}
                         onValueChange={(value) => {
                             const selected = Array.isArray(parking_stands) ? parking_stands.find((parking) => parking?.parking_stand === value) : null;
                             if (selected) {
-                                row.original.d_parking_stand = selected.id;
+                                row.original.a_parking_stand = selected.id;
                                 setSelectedParkingStand(selected.id);
                             }
                         }}

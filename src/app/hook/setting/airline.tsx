@@ -23,7 +23,10 @@ export default function airlineMaster() {
             if (data.session?.user) {
                 const { data: airline } = await supabase
                     .from("master_airline")
-                    .select("*");
+                    .select(`
+                        *,
+                        master_terminal(id, terminal)
+                    `);
                 if(error){
                     console.error("Error updating daily schedule:", error);
                     throw new Error(error.message);
@@ -55,6 +58,7 @@ export async function editAirline(datas) {
                 airline_name: datas.airline_name, // Use the vendor_id from the profiles data
                 airline_code_iata: datas.airline_code_iata, // Use the vendor_id from the profiles data
                 airline_code_icao: datas.airline_code_icao, // Use the vendor_id from the profiles data
+                terminal_id: datas.terminal_id,
                 modified_at: today, // Use the today date for modified date
                 modified_by: userDet.display_name // Use the display name for modified by
             })
@@ -86,6 +90,7 @@ export async function createAirlineMaster(datas) {
                 airline_name: datas.airline_name, // Use the vendor_id from the profiles data
                 airline_code_iata: datas.airline_code_iata, // Use the vendor_id from the profiles data
                 airline_code_icao: datas.airline_code_icao, // Use the vendor_id from the profiles data
+                terminal_id: datas.terminal_id,
                 created_by: datas.created_by
             })
             .select();

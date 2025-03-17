@@ -10,6 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { DeleteAirlineMaster } from './delete-item-category-master';
 import { DropdownMenu, DropdownMenuSeparator, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {EditAirlineMaster} from '@/app/(root)/admin/setting/master_airline/table/edit-item-category-master'
+
 export const maxDuration = 60;
 
 export type airline = {
@@ -19,9 +20,14 @@ export type airline = {
     airline_code_icao: string | null;
     created_at: string;
     created_by: string | null;
+    master_terminal: {
+        id: number;
+        terminal: string | null;
+    }
 }
 
-export const columns: ColumnDef<airline>[] = [
+export function columns(master_terminal: any): ColumnDef<airline>[] {
+    return[
     {
         accessorKey: "airline_name",
         header: ({ column }) => {
@@ -56,31 +62,9 @@ export const columns: ColumnDef<airline>[] = [
         },
     },
     {
-        accessorKey: "created_at",
-        header: "Create Date",
-        cell: ({row}) =>{
-            const dateValue = row.getValue('created_at');
-
-            const date = new Date(row.getValue('created_at'));
-                
-            // Check if dateValue is null or undefined
-                if (dateValue === '1/1/1970, 7:00:00 AM') {
-                
-                return <div></div>; // Return an empty string or div when null
-            }
-            // Define an array of month abbreviations
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-            // Extract day, month, and year
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = monthNames[date.getMonth()]; // Get month abbreviation
-            const year = date.getFullYear();
-
-            // Format as dd mm yyyy
-            const formattedDate = `${day} ${month} ${year}`;
-
-            return <div>{formattedDate}</div>
-        }
+        accessorKey: "terminal",
+        header: "Operated Terminal",
+        accessorFn: (row) => row.master_terminal?.terminal,
     },  
     {
         accessorKey: "created_by",
@@ -143,10 +127,11 @@ export const columns: ColumnDef<airline>[] = [
                 <Button className="text-white gap-5" variant="ghost" onClick={() => setDialogOpen(true)}><Trash2 size={18} color="#cf0202"/>Delete</Button>
                 </DropdownMenuItem>
                 </DropdownMenuContent>
-                <EditAirlineMaster stockMaster={rowData} isOpen={isSheetOpen} onOpenChange={setSheetOpen} />
+                <EditAirlineMaster master_terminal={master_terminal} stockMaster={rowData} isOpen={isSheetOpen} onOpenChange={setSheetOpen} />
                 <DeleteAirlineMaster id={rowData.id} isOpen={isDialogOpen} onOpenChange={setDialogOpen}/>
             </DropdownMenu>
             )
         },
     },
-];
+    ]
+};

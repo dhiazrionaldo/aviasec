@@ -28,11 +28,13 @@ import { CreateAirline } from "./create-item-category-master"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  master_terminal: []
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  master_terminal
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -79,7 +81,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w mr-2"
         />
-        <CreateAirline />
+        <CreateAirline master_terminal={master_terminal}/>
         {/* <Button>Create</Button> */}
       </div>
       <div className="rounded-md border">

@@ -396,6 +396,8 @@ export function DataTable<TData, TValue>({ columns, data, airlinesData }: DataTa
                               handleInputChange("airline_name", a.airline_name);
                               handleInputChange("airline_code_iata", a.airline_code_iata);
                               handleInputChange("airline_code_icao", a.airline_code_icao);
+                              handleInputChange("d_origin_terminal", a.master_terminal.terminal);
+                              handleInputChange("terminal_id", a.master_terminal.id);
                               setOpen(false);
                             }}
                           >

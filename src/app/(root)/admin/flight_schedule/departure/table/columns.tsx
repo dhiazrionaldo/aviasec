@@ -463,7 +463,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
             if (!row) return null; 
             if(!row.getIsSelected?.()){
                 return (
-                    <span>{row.original.d_origin_terminal}</span>
+                    <span>{row.original.d_origin_gate}</span>
                 );
             }else {
                 return (
@@ -506,7 +506,7 @@ export const columns: ColumnDef<DepartureManualFlightSchedules>[] = [
             if (!row) return null;
             if(!row.getIsSelected?.()){
                 return (
-                    <span>{row.original.d_origin_terminal}</span>
+                    <span>{row.original.d_parking_stand}</span>
                 );
             }else { 
                 return (

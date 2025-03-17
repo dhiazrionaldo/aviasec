@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {CirclePlus, Loader2} from "lucide-react"
+import {Check, ChevronsUpDown, CirclePlus, Loader2} from "lucide-react"
 import {
   Sheet,
   SheetClose,
@@ -18,19 +18,27 @@ import createClient from '@/utils/supabase/client'
 import useUser from '@/app/hook/useUser'
 import { useQueryClient } from '@tanstack/react-query'
 import { createAirlineMaster } from '@/app/hook/setting/airline'
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command";
 
 export const maxDuration = 60;
 
-export function CreateAirline() {
+export function CreateAirline({ master_terminal }) {
     const [airlineName, setairlineName] = useState('');
     const [airlineCodeIata, setairlineCodeIata] = useState('');
     const [airlineCodeIcao, setairlineCodeIcao] = useState('');
+    const [operatedTerminal, setOperatedTerminal] = useState('');
+    const [terminalName, setTerminalName] = useState('');
     const [isLoading, setLoading] = React.useState(false);
-    const supabase = createClient()
+    const supabase = createClient();
+    const [open, setOpen] = useState(false);
     const {isFetching, data} = useUser();      
     const queryClient = useQueryClient();
-
-    async function createCompanyMaster(body: { airlineName: string; airlineCodeIata: string; airlineCodeIcao: string; created_by: string}) {
+    
+    const handleInputChange = (operatedTerminal) => {
+      console.log(operatedTerminal)
+    };
+    async function createCompanyMaster(body: { airline_name: string; airline_code_iata: string; airline_code_icao: string; terminal_id: string; created_by: string; }) {
       setLoading(true);
       
       try {
@@ -61,10 +69,12 @@ export function CreateAirline() {
         airline_code_iata: airlineCodeIata,
         airline_code_icao: airlineCodeIcao,
         created_by: data?.display_name || '', 
-        airlineName: airlineName, 
-        airlineCodeIata: airlineCodeIata, 
-        airlineCodeIcao: airlineCodeIcao, 
+        // airlineName: airlineName, 
+        terminal_id: operatedTerminal
+        // airlineCodeIata: airlineCodeIata, 
+        // airlineCodeIcao: airlineCodeIcao, 
         };
+        
 
       await createCompanyMaster(datas)
     };
@@ -116,6 +126,47 @@ export function CreateAirline() {
                    onChange={(e) => setairlineCodeIcao(e.target.value.toUpperCase())} 
                    className="col-span-3 uppercase" 
             />
+          </div>
+        </div>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="operatedTerminal" className="text-right">
+              Operated Terminal
+            </Label>
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between col-span-3">
+                    {terminalName || "Select Operated Terminal..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="select airline..."/>
+                    <CommandList>
+                      <CommandEmpty>No Airline Found</CommandEmpty>
+                      <CommandGroup>
+                        {master_terminal.map((a) => (
+                          <CommandItem
+                            key={a.id}
+                            value={a.id}
+                            onSelect={() => {
+                              setOperatedTerminal(a.id)
+                              setTerminalName(a.terminal)
+                              setOpen(false);
+                            }}
+                          >
+                            {a.terminal}
+                            {master_terminal.terminal === a.terminal && (
+                              <Check className="ml-auto opacity-100" />
+                            )}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+            </Popover>
           </div>
         </div>
         <SheetFooter>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -15,10 +15,13 @@ import toast from 'react-hot-toast';
 import useUser from '@/app/hook/useUser';
 import { editAirline } from '@/app/hook/setting/airline';
 import { useQueryClient } from '@tanstack/react-query';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command";
 
 export const maxDuration = 60;
 
 type Props = { 
+  master_terminal: any;
   stockMaster: any; 
   isOpen: boolean; 
   onOpenChange: (open: boolean) => void;
@@ -26,11 +29,13 @@ type Props = {
 
 
 
-export function EditAirlineMaster({ stockMaster, isOpen, onOpenChange }: Props) {
+export function EditAirlineMaster({master_terminal, stockMaster, isOpen, onOpenChange }: Props) {
   const [airline_name, setAirlineName] = useState('');
   const [airline_code_iata, setAirlineCodeIata] = useState('');
   const [airline_code_icao, setAirlineCodeIcao] = useState('');
-  const [description, setDescription] = useState('');
+  const [terminal_id, setTerminalId] = useState('');
+  const [terminalName, setTerminalName] = useState('');
+  const [open, setOpen] = useState(false);
   const {data} = useUser();    
   const queryClient = useQueryClient();
   // const [skuList, setSkuList] = useState<SKU[]>([]); 
@@ -39,7 +44,6 @@ export function EditAirlineMaster({ stockMaster, isOpen, onOpenChange }: Props) 
   // const [storage_minimum_stock, setStorageMinimumStock] = useState('');
   // const [lounge_minimum_stock, setLoungeMinimumStock] = useState('');
   const [isLoading, setLoading] = useState(false);
-  
   
   // const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const input = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
@@ -57,16 +61,17 @@ export function EditAirlineMaster({ stockMaster, isOpen, onOpenChange }: Props) 
   //   setPrice(formattedPrice);
   // };
   
-
   useEffect(() => {
     if (stockMaster) {
       setAirlineName(stockMaster.airline_name);
       setAirlineCodeIata(stockMaster.airline_code_iata);
       setAirlineCodeIcao(stockMaster.airline_code_icao);
+      setTerminalId(stockMaster.terminal_id);
+      setTerminalName(stockMaster.master_terminal.terminal);
     }
   }, [stockMaster]);
   
-  async function editStockMaster(data: { id: number; airline_name: string; modified_by: string;}) {
+  async function editStockMaster(data: { id: number; airline_name: string; airline_code_iata:string; airline_code_icao:string; terminal_id: string; modified_by: string;}) {
     setLoading(true);
     
     try {
@@ -95,6 +100,7 @@ export function EditAirlineMaster({ stockMaster, isOpen, onOpenChange }: Props) 
       airline_name: airline_name,
       airline_code_iata: airline_code_iata,
       airline_code_icao: airline_code_icao,
+      terminal_id: terminal_id,
       id: stockMaster.id,
       // item_name: item_name,
       // unit_price: rawPrice,
@@ -146,6 +152,47 @@ export function EditAirlineMaster({ stockMaster, isOpen, onOpenChange }: Props) 
                    onChange={(e) => setAirlineCodeIcao(e.target.value)} 
                    className="col-span-3" 
             />
+          </div>
+        </div>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="operatedTerminal" className="text-right">
+              Operated Terminal
+            </Label>
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between col-span-3">
+                    {terminalName || "Select Operated Terminal..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="select airline..."/>
+                    <CommandList>
+                      <CommandEmpty>No Airline Found</CommandEmpty>
+                      <CommandGroup>
+                        {master_terminal.map((a) => (
+                          <CommandItem
+                            key={a.id}
+                            value={a.id}
+                            onSelect={() => {
+                              setTerminalId(a.id)
+                              setTerminalName(a.terminal)
+                              setOpen(false);
+                            }}
+                          >
+                            {a.terminal}
+                            {stockMaster.master_terminal.terminal === a.terminal && (
+                              <Check className="ml-auto opacity-100" />
+                            )}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+            </Popover>
           </div>
         </div>
         <SheetFooter>

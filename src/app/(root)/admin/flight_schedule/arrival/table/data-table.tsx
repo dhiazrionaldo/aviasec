@@ -226,25 +226,25 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         />
         <Input
           placeholder="Search Terminal..."
-          value={(table.getColumn("d_origin_terminal")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("a_des_terminal")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("d_origin_terminal")?.setFilterValue(event.target.value)
+            table.getColumn("a_des_terminal")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
         <Input
           placeholder="Search Boarding Gate..."
-          value={(table.getColumn("d_origin_gate")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("a_des_gate")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("d_origin_gate")?.setFilterValue(event.target.value)
+            table.getColumn("a_des_gate")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />
         <Input
           placeholder="Search Parking Stand..."
-          value={(table.getColumn("d_parking_stand")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("a_parking_stand")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("d_parking_stand")?.setFilterValue(event.target.value)
+            table.getColumn("a_parking_stand")?.setFilterValue(event.target.value)
           }
           className="max-w mr-2"
         />

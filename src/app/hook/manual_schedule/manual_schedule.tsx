@@ -29,8 +29,9 @@ export async function submitScheduleDeparture(datas) {
     const today = new Date().toISOString();
 
     if (!user_id) throw new Error("User not authenticated.");
-
+    console.log(datas)
     try {
+
         const schedulePromises = datas.map(async (entry) => {
             if (!entry.aircraft_model) throw new Error("The Aircraft Model can not be empty");
             if (!entry.schedule_type) throw new Error("The Schedule Type can not be empty");
@@ -41,7 +42,7 @@ export async function submitScheduleDeparture(datas) {
             if (!entry.start_effective_date) throw new Error("The Start Date can not be empty");
             if (!entry.end_effective_date) throw new Error("The End Date can not be empty");
             if (!entry.aircraft_types) throw new Error("The Aircraft Type can not be empty");
-
+                        
             if (entry.id) {
                 // **UPDATE** existing record
                 const { data: existingData, error: fetchError } = await supabase
@@ -150,6 +151,7 @@ export async function submitScheduleDeparture(datas) {
                             d_origin_iata: entry.d_ori_iata,
                             a_des_iata: entry.d_des_iata1,
                             d_origin_icao: entry.d_origin_icao,
+                            d_origin_terminal: entry.d_origin_terminal,
                             d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
                             d_flight_etd: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
                             airline_name: entry.airline_name,
@@ -260,6 +262,7 @@ export async function submitScheduleDeparture(datas) {
                         d_origin_iata: entry.d_ori_iata,
                         a_des_iata: entry.d_des_iata1,
                         d_origin_icao: entry.d_origin_icao,
+                        d_origin_terminal: entry.d_origin_terminal,                        
                         d_flight_std: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
                         d_flight_etd: format(date, "yyyy-MM-dd") + " " + entry.flight_time,
                         airline_name: entry.airline_name,
